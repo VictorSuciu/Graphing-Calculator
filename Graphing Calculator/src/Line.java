@@ -1,15 +1,26 @@
-import java.awt.Point;
+
 import java.util.ArrayList;
 
-public class Line extends Window {
+public class Line {
 	
 	ArrayList<Point> points = new ArrayList();
-		
-	public Line() {
-		
+	int width;
+	
+	public Line(int width) {
+		this.width = width;
+		generatePoints();
 	}
 	
 	public void generatePoints() {
 		
+		for(double i = 0 - ((double)width / 2.0); i <= (double)width / 2.0; i += 0.1) {
+			points.add(new Point(i, (100.0 * Math.sin(((double)i) / 80.0)) ));	
+			//points.add(new Point((double)i, ((-0.5 * (i - 400)) + 300) ));
+			//points.add(new Point((double)i, (Math.pow(i / 10.0,  2))));
+		}
+	}
+	
+	public ArrayList<Point> getPoints() {
+		return points;
 	}
 }
