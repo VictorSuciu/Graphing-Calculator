@@ -26,6 +26,7 @@ public class Window extends JFrame{
 	public void paint(Graphics g) {
 		super.paint(g);
 		Graphics2D g2 = (Graphics2D) g;
+		g2.setStroke(new BasicStroke(2));
 		Line2D yAxis = new Line2D.Float(400, 0, 400, 600);
 		Line2D xAxis = new Line2D.Float(0, 300, 800, 300);
 		g2.draw(yAxis);
@@ -37,17 +38,11 @@ public class Window extends JFrame{
 			y1 = l.getPoints().get(i).getY() + 300;
 			y2 = l.getPoints().get(i + 1).getY() + 300;
 			
-			//System.out.println((y1 + (2 * ((height / 2) - y1))) + 300 + " " + (y2 + (2 * ((height / 2) - y2))) + 300);
-			System.out.println(y1 + " " + y2);
-			
 			temp = new Line2D.Double((int)l.getPoints().get(i).getX() + 400.0, 
 									(y1 + (2.0 * (((double)height / 2.0) - y1))), 
 								    (int)l.getPoints().get(i + 1).getX() + 400.0, 
 								    (y2 + (2.0 * (((double)height / 2.0) - y2))));
 			g2.draw(temp);
-			System.out.println(i);
-			//200 400
-			//(y1 + (2 * ((height / 2) - y1))) + 300
 		}
 	}
 	
