@@ -7,6 +7,7 @@ public class Equation {
 	
 	ArrayList<String> steps = new ArrayList();
 	ArrayList<String> equation = new ArrayList();
+	ArrayList<Integer> indexes = new ArrayList();
 	
 	String validItems = "0 1 2 3 4 5 6 7 8 9 + - * / ^ ( ) . x";
 	char[] nums = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
@@ -19,6 +20,7 @@ public class Equation {
 		index = 0;
 		prepareString();
 		System.out.println(segmentedEq);
+		index = -1;
 	}
 	
 	public Point getPoint(double x) {
@@ -51,32 +53,101 @@ public class Equation {
 			else if(equationString.charAt(index) == 'x') {
 				segmentedEq.add("x");
 			}
-			
+			else if(isSin() == true) {
+				segmentedEq.add("sin");
+			}
+			else if(isCos() == true) {
+				segmentedEq.add("cos");
+			}
 			//spacedEquation += " ";
 			index++;
 		}
 		
 	}
-	private void parseEquation() {
+	private void generateEquation() {
+		int parentheseCount = 0;
+		int currentIndex = 0;
+		String currentItem = "";
+		String isSymbol = "";
 		
+		for(int i = 0; i < segmentedEq.size(); i++) {
+			currentItem = segmentedEq.get(i);
+			
+			if(currentItem.length() == 1) {
+				isSymbol = isSymbol(currentItem.charAt(0));
+				
+				
+			}
+		}
 	}
-	
-	private boolean isSin(int index) {
-		if(equationString.substring(index, index + 3).equals("sin")) {
-			return true;
+	public double f(double x) {
+		index++;
+		if(index < segmentedEq.size()) {
+			if(segmentedEq.get(index).equals("(")) {
+				return f(f(x));
+			}
+			else if(segmentedEq.get(index).equals(")")) {
+				return f(x);
+			}
+			else if(segmentedEq.get(index).equals("x")) {
+				return f(x);
+			}
+			else if(segmentedEq.get(index).equals("+")) {
+				return x + f(x);
+			}
+			else if(segmentedEq.get(index).equals("-")) {
+				return x - f(x);
+			}
+			else if(segmentedEq.get(index).equals("*")) {
+				return x * f(x);
+			}
+			else if(segmentedEq.get(index).equals("/")) {
+				return x / f(x);
+			}
+			else if(segmentedEq.get(index).equals("sin")) {
+				return Math.sin(f(x));
+			}
+			else if(segmentedEq.get(index).equals("cos")) {
+				return Math.cos(f(x));
+			}
+			else if(isNumBool(segmentedEq.get(index).charAt(0)) == true) {
+				double num = Double.parseDouble(segmentedEq.get(index));
+				return f(num);
+			}
+			else {
+				return (Double) null;
+			}
+			
+		}
+		else {
+			index = -1;
+			return x;
+		}
+	}
+	private boolean isSin() {
+		if(index < equationString.length() - 2) {
+			if(equationString.substring(index, index + 3).equals("sin")) {
+				return true;
+			}
+			else {
+				return false;
+			}
 		}
 		else {
 			return false;
-			
 		}
 	}
-	private boolean isCos(int index) {
-		if(equationString.substring(index, index + 3).equals("cos")) {
-			return true;
+	private boolean isCos() {
+		if(index < equationString.length() - 2) {
+			if(equationString.substring(index, index + 3).equals("cos")) {
+				return true;
+			}
+			else {
+				return false;
+			}
 		}
 		else {
 			return false;
-			
 		}
 	}
 	private String getNum() {
@@ -87,17 +158,27 @@ public class Equation {
 		
 		while(test != -1) {
 			numString += "" + test;
-			System.out.println(equationString.charAt(index));
-			test = isNum(equationString.charAt(index));
+			if(index >= equationString.length() - 1) {
+				break;
+			}
 			index++;
+			test = isNum(equationString.charAt(index));
+			System.out.println(equationString.charAt(index) + " " + test);
+			
 		}
+		//System.out.println("end");
+		
 		if(equationString.charAt(index) == '.') {
 			numString += ".";
+			index++;
+			test = test = isNum(equationString.charAt(index));
 			while(test != -1) {
 				numString += "" + test;
-				test = isNum(equationString.charAt(index));
 				index++;
+				test = isNum(equationString.charAt(index));
+				
 			}
+			index--;
 		}
 		else {
 			numString += ".0";
@@ -108,12 +189,19 @@ public class Equation {
 	}
 	private int isNum(char c) {
 		for(int i = 0; i < nums.length; i++) {
-			
 			if(nums[i] == c) {
 				return Character.getNumericValue(nums[i]);
 			}
 		}
 		return -1;
+	}
+	private boolean isNumBool(char c) {
+		for(int i = 0; i < nums.length; i++) {
+			if(nums[i] == c) {
+				return true;
+			}
+		}
+		return false;
 	}
 	private String isSymbol(char c) {
 		
