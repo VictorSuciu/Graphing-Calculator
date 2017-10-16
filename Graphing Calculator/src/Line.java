@@ -18,7 +18,7 @@ public class Line {
 		this.width = width;
 		generatePoints();
 	}
-	
+	//
 	public void generatePoints() {
 		
 		for(double i = 0 - ((double)width / 2.0); i <= (double)width / 2.0; i += 0.01) {
