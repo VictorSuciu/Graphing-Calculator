@@ -11,14 +11,16 @@ public class Equation {
 	
 	String validItems = "0 1 2 3 4 5 6 7 8 9 + - * / ^ ( ) . x";
 	char[] nums = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-	char[] symbols = {'(', ')', '+', '-', '*', '/', '^'}; 
+	char[] symbols = {'(', ')', '+', '-', '*', '/', '^', '|'}; 
 	int index;
+	double thisX = 0;
+	int absCount = 0;
 	// 5 + (x / 2)
 	
 	public Equation(String s) {
 		equationString = s;
 		index = 0;
-		prepareString();
+		segmentedEq = prepareString(equationString);
 		System.out.println(segmentedEq);
 		index = -1;
 	}
@@ -28,41 +30,46 @@ public class Equation {
 		return new Point(0, 0);
 	}
 	
-	private void prepareString() {
-		
+	private ArrayList<String> prepareString(String s) {
+		ArrayList<String> ret = new ArrayList();
 		index = 0;
 		char current;
 		int isNum;
 		String isSymbol;
 		
-		while(index < equationString.length()) {
+		while(index < s.length()) {
 			
-			current = equationString.charAt(index);
+			current = s.charAt(index);
 			
 			isNum = isNum(current);
 			isSymbol = isSymbol(current);
 			
 			if(isNum != -1) {
-				//String num = "";
-				//num = getNum();
-				segmentedEq.add(getNum());
+				ret.add(getNum());
+				
 			}
 			else if(isSymbol != "") {
-				segmentedEq.add(isSymbol);
+				ret.add(isSymbol);
 			}
-			else if(equationString.charAt(index) == 'x') {
-				segmentedEq.add("x");
+			else if(s.charAt(index) == 'x') {
+				ret.add("x");
 			}
 			else if(isSin() == true) {
-				segmentedEq.add("sin");
+				ret.add("sin");
 			}
 			else if(isCos() == true) {
-				segmentedEq.add("cos");
+				ret.add("cos");
+			}
+			else if(isTan() == true) {
+				ret.add("tan");
+			}
+			else if(isSQRT() == true) {
+				ret.add("sqrt");
 			}
 			//spacedEquation += " ";
 			index++;
 		}
-		
+		return ret;
 	}
 	private void generateEquation() {
 		int parentheseCount = 0;
@@ -81,16 +88,22 @@ public class Equation {
 		}
 	}
 	public double f(double x) {
+		boolean power = false;
 		index++;
+		//System.out.println(index + " " + eq);
+		if(index == 0) {
+			thisX = x;
+			//System.out.println("thisX = " + thisX);
+		}
 		if(index < segmentedEq.size()) {
 			if(segmentedEq.get(index).equals("(")) {
 				return f(f(x));
 			}
 			else if(segmentedEq.get(index).equals(")")) {
-				return f(x);
+				return x;
 			}
 			else if(segmentedEq.get(index).equals("x")) {
-				return f(x);
+				return f(thisX);
 			}
 			else if(segmentedEq.get(index).equals("+")) {
 				return x + f(x);
@@ -104,11 +117,33 @@ public class Equation {
 			else if(segmentedEq.get(index).equals("/")) {
 				return x / f(x);
 			}
+			
+			else if(segmentedEq.get(index).equals("^")) {
+				return Math.pow(x, f(x));
+			}
+			else if(segmentedEq.get(index).equals("|")) {
+				absCount++;
+				//System.out.println(absCount);
+				if(absCount % 2 != 0) {
+					return f(Math.abs(f(x)));
+				}
+				else {
+					
+					return Math.abs(x);
+				}
+				
+			}
 			else if(segmentedEq.get(index).equals("sin")) {
 				return Math.sin(f(x));
 			}
 			else if(segmentedEq.get(index).equals("cos")) {
 				return Math.cos(f(x));
+			}
+			else if(segmentedEq.get(index).equals("tan")) {
+				return Math.tan(f(x));
+			}
+			else if(segmentedEq.get(index).equals("sqrt")) {
+				return Math.sqrt(f(x));
 			}
 			else if(isNumBool(segmentedEq.get(index).charAt(0)) == true) {
 				double num = Double.parseDouble(segmentedEq.get(index));
@@ -120,10 +155,14 @@ public class Equation {
 			
 		}
 		else {
+			absCount = 2;
 			index = -1;
+			//System.out.println("x = " + x);
+			//System.out.println();
 			return x;
 		}
 	}
+	
 	private boolean isSin() {
 		if(index < equationString.length() - 2) {
 			if(equationString.substring(index, index + 3).equals("sin")) {
@@ -150,35 +189,64 @@ public class Equation {
 			return false;
 		}
 	}
+	private boolean isTan() {
+		if(index < equationString.length() - 2) {
+			if(equationString.substring(index, index + 3).equals("tan")) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+		else {
+			return false;
+		}
+	}
+	private boolean isSQRT() {
+		if(index < equationString.length() - 3) {
+			if(equationString.substring(index, index + 4).equals("sqrt")) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+		else {
+			return false;
+		}
+	}
+	//2*x + ((x * 10))
+	
 	private String getNum() {
+		
 		double ret = 0.0;
 		String numString = "";
+		int advanceBy = 0;
+		int numIndex = index;
+		int test = isNum(equationString.charAt(numIndex));
 		
-		int test = isNum(equationString.charAt(index));
-		
-		while(test != -1) {
-			numString += "" + test;
-			if(index >= equationString.length() - 1) {
-				break;
-			}
-			index++;
-			test = isNum(equationString.charAt(index));
-			System.out.println(equationString.charAt(index) + " " + test);
-			
-		}
-		//System.out.println("end");
-		
-		if(equationString.charAt(index) == '.') {
-			numString += ".";
-			index++;
-			test = test = isNum(equationString.charAt(index));
-			while(test != -1) {
-				numString += "" + test;
+		numString += "" + isNum(equationString.charAt(index));
+		if(index < equationString.length() - 1) {
+			while(isNum(equationString.charAt(index + 1)) != -1) {
 				index++;
-				test = isNum(equationString.charAt(index));
+				if(index == equationString.length() - 1) {
+					break;
+				}
+				numString += "" + isNum(equationString.charAt(index));
+			}
+		}
+		if(index < equationString.length() -1) {
+			if(equationString.charAt(index + 1) == '.') {
+				numString += ".";
+				index += 2;
+				numString += "" + isNum(equationString.charAt(index));
+				while(isNum(equationString.charAt(index + 1)) != -1) {
+					index++;
+					numString += "" + isNum(equationString.charAt(index));
+			
+				}
 				
 			}
-			index--;
 		}
 		else {
 			numString += ".0";

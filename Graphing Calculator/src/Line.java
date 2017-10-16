@@ -1,11 +1,19 @@
-
 import java.util.ArrayList;
 
 public class Line {
 	
 	ArrayList<Point> points = new ArrayList();
 	int width;
-	Equation e = new Equation("100*sin(x / 20)");
+	
+	double xMin = -10.0;
+	double xMax = 10.0;
+	double yMin = -10.0;
+	double yMax = 10.0;
+	
+	Equation e = new Equation("");
+	
+	//Equation e = new Equation("(x / (10 * 1.5)) * (x / (10 * 1.5))");
+	//Equation e = new Equation("(x * x) / (x / 10)");
 	public Line(int width) {
 		this.width = width;
 		generatePoints();
@@ -13,7 +21,7 @@ public class Line {
 	
 	public void generatePoints() {
 		
-		for(double i = 0 - ((double)width / 2.0); i <= (double)width / 2.0; i += 0.1) {
+		for(double i = 0 - ((double)width / 2.0); i <= (double)width / 2.0; i += 0.01) {
 			//points.add(new Point(i, (100.0 * Math.sin(((double)i) / 40.0)) ));	
 			//points.add(new Point((double)i, ((-0.5 * (i - 400)) + 300) ));
 			//points.add(new Point((double)i, (Math.pow(i / 10.0,  2))));

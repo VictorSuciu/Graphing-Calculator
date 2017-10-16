@@ -17,7 +17,7 @@ public class Window extends JFrame{
 		l = new Line(width);
 		
 		super.setName("Graphing Calculator");
-		super.setSize(width, height);
+		super.setSize(width, 750);
 		super.setVisible(true);
 		super.setContentPane(panel);
 		
@@ -34,15 +34,18 @@ public class Window extends JFrame{
 		double y1 = 0;
 		double y2 = 0;
 		Line2D temp;
+		g2.setColor(Color.RED);
 		for(int i = 0; i < l.getPoints().size() - 1; i++) {
 			y1 = l.getPoints().get(i).getY() + 300;
 			y2 = l.getPoints().get(i + 1).getY() + 300;
 			
-			temp = new Line2D.Double((int)l.getPoints().get(i).getX() + 400.0, 
-									(y1 + (2.0 * (((double)height / 2.0) - y1))), 
-								    (int)l.getPoints().get(i + 1).getX() + 400.0, 
-								    (y2 + (2.0 * (((double)height / 2.0) - y2))));
-			g2.draw(temp);
+			if(y1 <= height && y1 >= 0) {
+				temp = new Line2D.Double((int)l.getPoints().get(i).getX() + 400.0, 
+										(y1 + (2.0 * (((double)height / 2.0) - y1))), 
+									    (int)l.getPoints().get(i + 1).getX() + 400.0, 
+									    (y2 + (2.0 * (((double)height / 2.0) - y2))));
+				g2.draw(temp);
+			}
 		}
 	}
 	
