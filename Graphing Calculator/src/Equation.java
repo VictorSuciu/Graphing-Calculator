@@ -134,7 +134,8 @@ public class Equation {
 				
 			}
 			else if(segmentedEq.get(index).equals("sin")) {
-				return Math.sin(f(x));
+				index++;
+				return f(Math.sin(f(x)));
 			}
 			else if(segmentedEq.get(index).equals("cos")) {
 				return Math.cos(f(x));
