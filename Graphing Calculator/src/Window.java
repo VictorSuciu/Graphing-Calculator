@@ -12,12 +12,12 @@ public class Window extends JFrame{
 	int width;
 	int height;
 	public Window() {
-		width = 800;
+		width = 600;
 		height = 600;
-		l = new Line(width);
+		l = new Line(width, height);
 		
 		super.setName("Graphing Calculator");
-		super.setSize(width, 750);
+		super.setSize(width, height);
 		super.setVisible(true);
 		super.setContentPane(panel);
 		
@@ -27,8 +27,8 @@ public class Window extends JFrame{
 		super.paint(g);
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setStroke(new BasicStroke(2));
-		Line2D yAxis = new Line2D.Float(400, 0, 400, 600);
-		Line2D xAxis = new Line2D.Float(0, 300, 800, 300);
+		Line2D yAxis = new Line2D.Float(width / 2, 0, width / 2, height);
+		Line2D xAxis = new Line2D.Float(0, height / 2, width, height / 2);
 		g2.draw(yAxis);
 		g2.draw(xAxis);
 		double y1 = 0;
@@ -40,9 +40,9 @@ public class Window extends JFrame{
 			y2 = l.getPoints().get(i + 1).getY() + 300;
 			
 			if(y1 <= height && y1 >= 0) {
-				temp = new Line2D.Double((int)l.getPoints().get(i).getX() + 400.0, 
+				temp = new Line2D.Double((int)l.getPoints().get(i).getX() + (double)height / 2.0, 
 										(y1 + (2.0 * (((double)height / 2.0) - y1))), 
-									    (int)l.getPoints().get(i + 1).getX() + 400.0, 
+									    (int)l.getPoints().get(i + 1).getX() + (double)height / 2.0, 
 									    (y2 + (2.0 * (((double)height / 2.0) - y2))));
 				g2.draw(temp);
 			}
