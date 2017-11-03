@@ -4,10 +4,8 @@ public class Equation {
 	
 	String equationString;
 	ArrayList<String> segmentedEq = new ArrayList();
-	
-	ArrayList<String> steps = new ArrayList();
+	ArrayList<Point> points = new ArrayList();
 	ArrayList<String> equation = new ArrayList();
-	ArrayList<Integer> indexes = new ArrayList();
 	
 	String validItems = "0 1 2 3 4 5 6 7 8 9 + - * / ^ ( ) . x";
 	char[] nums = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
@@ -15,19 +13,45 @@ public class Equation {
 	int index;
 	double thisX = 0;
 	int absCount = 0;
-	// 5 + (x / 2)
+
+	int width;
+	int height;
 	
-	public Equation(String s) {
+	double xMin;
+	double xMax;
+	double yMin;
+	double yMax;
+	
+	public Equation(String s, int width, int height, double xMin, double xMax, double yMin, double yMax) {
 		equationString = s;
 		index = 0;
 		segmentedEq = prepareString(equationString);
 		System.out.println(segmentedEq);
+		
+		this.width = width;
+		this.height = height;
+		
+		this.xMin = xMin;
+		this.xMax = xMax;
+		this.yMin = yMin;
+		this.yMax = yMax;
+		
 		index = -1;
+		
+		generatePoints();
 	}
 	
-	public Point getPoint(double x) {
-		
-		return new Point(0, 0);
+	
+	public void generatePoints() {
+		for(double i = 0 - ((double)width / 2.0); i <= (double)width / 2.0; i += 0.01) {
+			
+			points.add(new Point(i, (f((i + (((xMax + xMin) / 2) * (height / (xMax - xMin))) )/ ((width / 2) / ((xMax - xMin) / 2)    ) 
+					+ (((yMax + yMin) / 2) * (height / (yMax - yMin)))) * ((height / 2) / ((yMax - yMin) / 2)) ) 
+					- (((yMax + yMin) / 2) * (height / (yMax - yMin)))          ));
+		}
+	}
+	public ArrayList<Point> getPoints() {
+		return points;
 	}
 	
 	private ArrayList<String> prepareString(String s) {
