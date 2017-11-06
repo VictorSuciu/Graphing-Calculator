@@ -21,7 +21,9 @@ public class Equation {
 	double xMax;
 	double yMin;
 	double yMax;
-	
+	public Equation() {
+		
+	}
 	public Equation(String s, int width, int height, double xMin, double xMax, double yMin, double yMax) {
 		equationString = s;
 		index = 0;
@@ -45,7 +47,7 @@ public class Equation {
 	public void generatePoints() {
 		for(double i = 0 - ((double)width / 2.0); i <= (double)width / 2.0; i += 0.01) {
 			
-			points.add(new Point(i, (f((i + (((xMax + xMin) / 2) * (height / (xMax - xMin))) )/ ((width / 2) / ((xMax - xMin) / 2)    ) 
+			points.add(new Point(i, (f((i + (((xMax + xMin) / 2) * (width / (xMax - xMin))) ) / ((width / 2) / ((xMax - xMin) / 2)    ) 
 					+ (((yMax + yMin) / 2) * (height / (yMax - yMin)))) * ((height / 2) / ((yMax - yMin) / 2)) ) 
 					- (((yMax + yMin) / 2) * (height / (yMax - yMin)))          ));
 		}

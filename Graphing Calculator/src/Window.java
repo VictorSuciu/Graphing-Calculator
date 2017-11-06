@@ -16,11 +16,11 @@ public class Window extends JFrame implements ActionListener{
 	int height = 600;
 	
 	double xMin = -10.0;
-	double xMax = 20.0;
+	double xMax = 10.0;
 	double yMin = -10.0;
 	double yMax = 10.0;
 	
-	Equation equation = new Equation("x", width, height, xMin, xMax, yMin, yMax);
+	Equation equation = new Equation();
 	
 	public Window() {
 		System.out.println(equation.getPoints());
@@ -28,20 +28,27 @@ public class Window extends JFrame implements ActionListener{
 		super.setSize(width, height + 100);
 		super.setVisible(true);
 		super.setContentPane(panel);
-		equationIn.setBounds(width / 2 - 60, height + 10, 120, 30);
+		equationIn.setBounds(width / 2 - 100, height + 10, 160, 30);
 		graphButton.setBounds(width / 2 + 70, height + 10, 70, 30);
+		graphButton.addActionListener(this);
 		panel.add(equationIn);
 		panel.add(graphButton);
 		
 		
 	}
-	
+	//(height / 2) - (  (((int)yMax + (int)yMin) / 2) * ((height / 2) / (((int)yMax - (int)yMin) / 2))  )
 	public void paint(Graphics g) {
 		super.paint(g);
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setStroke(new BasicStroke(2));
-		Line2D yAxis = new Line2D.Float(width / 2, 0, width / 2, height);
-		Line2D xAxis = new Line2D.Float(0, height / 2, width, height / 2);
+		Line2D yAxis = new Line2D.Float((width / 2) - (  (((int)xMax + (int)xMin) / 2) * ((width / 2) / (((int)xMax - (int)xMin) / 2))  ), 
+										0, 
+										(width / 2) - (  (((int)xMax + (int)xMin) / 2) * ((width / 2) / (((int)xMax - (int)xMin) / 2))  ), 
+										height);
+		Line2D xAxis = new Line2D.Float(0, 
+										(height / 2) - (  (((int)yMax + (int)yMin) / 2) * ((height / 2) / (((int)yMax - (int)yMin) / 2))  ), 
+										width, 
+										(height / 2) - (  (((int)yMax + (int)yMin) / 2) * ((height / 2) / (((int)yMax - (int)yMin) / 2))  ));
 		g2.draw(yAxis);
 		g2.draw(xAxis);
 		double y1 = 0;
