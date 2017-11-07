@@ -164,13 +164,16 @@ public class Equation {
 				return f(Math.sin(f(x)));
 			}
 			else if(segmentedEq.get(index).equals("cos")) {
-				return Math.cos(f(x));
+				index++;
+				return f(Math.cos(f(x)));
 			}
 			else if(segmentedEq.get(index).equals("tan")) {
-				return Math.tan(f(x));
+				index++;
+				return f(Math.tan(f(x)));
 			}
 			else if(segmentedEq.get(index).equals("sqrt")) {
-				return Math.sqrt(f(x));
+				index++;
+				return f(Math.sqrt(f(x)));
 			}
 			else if(isNumBool(segmentedEq.get(index).charAt(0)) == true) {
 				double num = Double.parseDouble(segmentedEq.get(index));
