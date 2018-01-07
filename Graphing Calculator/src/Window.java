@@ -11,7 +11,7 @@ public class Window extends JFrame implements ActionListener{
 	JTextField equationIn = new JTextField();
 	JButton graphButton = new JButton("Graph");
 	JButton test = new JButton("test");
-	
+	//test
 	int width = 600;
 	int height = 600;
 	
