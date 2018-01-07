@@ -6,11 +6,11 @@ import java.awt.geom.*;
 
 public class Window extends JFrame implements ActionListener{
 	
-	//public JFrame frame = new JFrame("Graphing Calculator");
 	public JPanel panel = new JPanel();
-	public JButton test = new JButton("Test");
+	
 	JTextField equationIn = new JTextField();
 	JButton graphButton = new JButton("Graph");
+	JButton test = new JButton("test");
 	
 	int width = 600;
 	int height = 600;
@@ -24,19 +24,22 @@ public class Window extends JFrame implements ActionListener{
 	
 	public Window() {
 		System.out.println(equation.getPoints());
-		super.setName("Graphing Calculator");
-		super.setSize(width, height + 100);
-		super.setVisible(true);
-		super.setContentPane(panel);
+		
+		
 		equationIn.setBounds(width / 2 - 100, height + 10, 160, 30);
 		graphButton.setBounds(width / 2 + 70, height + 10, 70, 30);
 		graphButton.addActionListener(this);
+		
 		panel.add(equationIn);
 		panel.add(graphButton);
 		
-		
+		super.setName("Graphing Calculator");
+		super.setSize(width, height + 100);
+		super.setContentPane(panel);
+		super.setLayout(null);
+		super.setVisible(true);
 	}
-	//(height / 2) - (  (((int)yMax + (int)yMin) / 2) * ((height / 2) / (((int)yMax - (int)yMin) / 2))  )
+	
 	public void paint(Graphics g) {
 		super.paint(g);
 		Graphics2D g2 = (Graphics2D) g;
@@ -60,17 +63,13 @@ public class Window extends JFrame implements ActionListener{
 			y2 = equation.getPoints().get(i + 1).getY() + 300;
 			
 			if(y1 <= height && y1 >= 0) {
-				temp = new Line2D.Double((int)equation.getPoints().get(i).getX() + (double)height / 2.0, 
+				temp = new Line2D.Double((int)equation.getPoints().get(i).getX() + (double)width / 2.0, 
 										(y1 + (2.0 * (((double)height / 2.0) - y1))), 
-									    (int)equation.getPoints().get(i + 1).getX() + (double)height / 2.0, 
+									    (int)equation.getPoints().get(i + 1).getX() + (double)width / 2.0, 
 									    (y2 + (2.0 * (((double)height / 2.0) - y2))));
 				g2.draw(temp);
 			}
 		}
-	}
-	
-	public int getWidth() {
-		return width;
 	}
 
 	@Override

@@ -27,7 +27,7 @@ public class Equation {
 	public Equation(String s, int width, int height, double xMin, double xMax, double yMin, double yMax) {
 		equationString = s;
 		index = 0;
-		segmentedEq = prepareString(equationString);
+		segmentedEq = prepareString();
 		System.out.println(segmentedEq);
 		
 		this.width = width;
@@ -56,28 +56,30 @@ public class Equation {
 		return points;
 	}
 	
-	private ArrayList<String> prepareString(String s) {
+	private ArrayList<String> prepareString() {
 		ArrayList<String> ret = new ArrayList();
 		index = 0;
 		char current;
 		int isNum;
 		String isSymbol;
+		boolean gotNum = false;
 		
-		while(index < s.length()) {
+		while(index < equationString.length()) {
 			
-			current = s.charAt(index);
+			current = equationString.charAt(index);
 			
 			isNum = isNum(current);
 			isSymbol = isSymbol(current);
 			
 			if(isNum != -1) {
 				ret.add(getNum());
+				gotNum = true;
 				
 			}
 			else if(isSymbol != "") {
 				ret.add(isSymbol);
 			}
-			else if(s.charAt(index) == 'x') {
+			else if(equationString.charAt(index) == 'x') {
 				ret.add("x");
 			}
 			else if(isSin() == true) {
@@ -93,7 +95,10 @@ public class Equation {
 				ret.add("sqrt");
 			}
 			//spacedEquation += " ";
-			index++;
+			if(gotNum == false) {
+				index++;
+			}
+			gotNum = false;
 		}
 		return ret;
 	}
@@ -242,46 +247,34 @@ public class Equation {
 			return false;
 		}
 	}
-	//2*x + ((x * 10))
 	
 	private String getNum() {
-		
-		double ret = 0.0;
 		String numString = "";
-		int advanceBy = 0;
-		int numIndex = index;
-		int test = isNum(equationString.charAt(numIndex));
 		
-		numString += "" + isNum(equationString.charAt(index));
-		if(index < equationString.length() - 1) {
-			while(isNum(equationString.charAt(index + 1)) != -1) {
-				index++;
-				if(index == equationString.length() - 1) {
-					break;
-				}
-				numString += "" + isNum(equationString.charAt(index));
-			}
+		while(index < equationString.length() && isNum(equationString.charAt(index)) != -1) {
+			numString += "" + isNum(equationString.charAt(index));
+			index++;
 		}
-		if(index < equationString.length() -1) {
-			if(equationString.charAt(index + 1) == '.') {
+		if(index < equationString.length() - 1) {
+			if(equationString.charAt(index) == '.') {
+				index++;
 				numString += ".";
-				index += 2;
-				numString += "" + isNum(equationString.charAt(index));
-				while(isNum(equationString.charAt(index + 1)) != -1) {
-					index++;
+				while(index < equationString.length() && isNum(equationString.charAt(index)) != -1) {
 					numString += "" + isNum(equationString.charAt(index));
-			
+					index++;
 				}
-				
 			}
+			else {
+				numString += ".0";
+			}
+			
 		}
 		else {
 			numString += ".0";
 		}
-		
-		ret = Double.parseDouble(numString);
 		return numString;
 	}
+	
 	private int isNum(char c) {
 		for(int i = 0; i < nums.length; i++) {
 			if(nums[i] == c) {
