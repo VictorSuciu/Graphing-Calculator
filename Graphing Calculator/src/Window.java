@@ -7,6 +7,7 @@ import java.awt.geom.*;
 public class Window extends JFrame implements ActionListener, MouseListener {
 	
 	public JPanel panel = new JPanel();
+	JPanel controls = new JPanel();
 	
 	JTextField equationIn = new JTextField();
 	JButton graphButton = new JButton("Graph");
@@ -36,6 +37,8 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 	Color jElementColor = Color.decode("#555555");
 	Color jTextColor = Color.decode("#AAAAAA");
 	Color jLabelColor = Color.decode("#777777");
+	Color jHighlightColor = Color.decode("#DDDDDD");
+	Color controlsColor = Color.decode("#1C1C1C");
 	
 	Equation equation = new Equation();
 	
@@ -53,22 +56,23 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 		System.out.println(equation.getPoints());
 		
 		
-		equationIn.setBounds(width, 10, 160, 30);
+		equationIn.setBounds(0, 10, 160, 30);
 		graphButton.setBounds(width + 45, 40, 70, 30);
 		
 		graphButton.setBackground(jElementColor);;
 		graphButton.setForeground(jTextColor);
 		
 		instruction.setForeground(jLabelColor);
-		instruction.setBounds(width + 20, equationIn.getY() + 35, 130, 60);
+		instruction.setBounds(20, equationIn.getY() + 35, 130, 60);
 		
 		equationIn.setBackground(jElementColor);
 		equationIn.setForeground(jTextColor);
 		equationIn.setCaretColor(jTextColor);
+		equationIn.setSelectionColor(jHighlightColor);
 		
 		graphButton.addActionListener(this);
 		
-		xMaxLab.setBounds(width + 10, 120, 45, 30);
+		xMaxLab.setBounds(10, 120, 45, 30);
 		xMinLab.setBounds(xMaxLab.getX(), xMaxLab.getY() + 40, 45, 30);
 		yMaxLab.setBounds(xMaxLab.getX(), xMinLab.getY() + 40, 45, 30);
 		yMinLab.setBounds(xMaxLab.getX(), yMaxLab.getY() + 40, 45, 30);
@@ -98,28 +102,39 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 		yMinIn.setCaretColor(jTextColor);
 		yMaxIn.setCaretColor(jTextColor);
 		
-		panel.add(equationIn);
+		xMinIn.setSelectionColor(jHighlightColor);
+		xMaxIn.setSelectionColor(jHighlightColor);
+		yMinIn.setSelectionColor(jHighlightColor);
+		yMaxIn.setSelectionColor(jHighlightColor);
+		
+		controls.add(equationIn);
 		//panel.add(graphButton);
-		panel.add(instruction);
+		controls.add(instruction);
 		
-		panel.add(xMinLab);
-		panel.add(xMaxLab);
-		panel.add(yMinLab);
-		panel.add(yMaxLab);
+		controls.add(xMinLab);
+		controls.add(xMaxLab);
+		controls.add(yMinLab);
+		controls.add(yMaxLab);
 		
-		panel.add(xMinIn);
-		panel.add(xMaxIn);
-		panel.add(yMinIn);
-		panel.add(yMaxIn);
+		controls.add(xMinIn);
+		controls.add(xMaxIn);
+		controls.add(yMinIn);
+		controls.add(yMaxIn);
 		
 		Color backgroundColor = Color.decode("#222222");
 		panel.setBackground(backgroundColor);
+		
+		controls.setBounds(width + 1, 0, 160, height);
+		controls.setBackground(controlsColor);
+		controls.setLayout(null);
+		panel.add(controls);
 		
 		super.setName("Graphing Calculator");
 		super.setSize(width + 160, height);
 		super.setContentPane(panel);
 		super.setLayout(null);
 		super.addMouseListener(this);
+		super.setResizable(false);
 		super.setVisible(true);
 		
 	}
@@ -219,6 +234,11 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
 		if(e.getX() <= width) {
 			eq = equationIn.getText();
 			System.out.println("Text = " + eq);
@@ -246,12 +266,6 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 			}
 			super.repaint();
 		}
-		
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
