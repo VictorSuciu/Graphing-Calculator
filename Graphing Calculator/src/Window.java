@@ -4,13 +4,14 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
 
-public class Window extends JFrame implements ActionListener{
+public class Window extends JFrame implements ActionListener, MouseListener {
 	
 	public JPanel panel = new JPanel();
 	
 	JTextField equationIn = new JTextField();
 	JButton graphButton = new JButton("Graph");
 	JButton test = new JButton("test");
+	JLabel instruction = new JLabel("<html>Click anywhere on <br/>the plane to graph!</html>");
 	
 	JTextField xMinIn = new JTextField();
 	JTextField xMaxIn = new JTextField();
@@ -22,8 +23,6 @@ public class Window extends JFrame implements ActionListener{
 	JLabel yMinLab = new JLabel("Y Min:");
 	JLabel yMaxLab = new JLabel("Y Max:");
 	
-	JButton apply = new JButton("Apply Values");
-	
 	String eq;
 	
 	int width = 600;
@@ -34,6 +33,10 @@ public class Window extends JFrame implements ActionListener{
 	double yMin;
 	double yMax;
 	
+	Color jElementColor = Color.decode("#555555");
+	Color jTextColor = Color.decode("#AAAAAA");
+	Color jLabelColor = Color.decode("#777777");
+	
 	Equation equation = new Equation();
 	
 	public Window() {
@@ -41,28 +44,63 @@ public class Window extends JFrame implements ActionListener{
 		xMax = 10.0;
 		yMin = -10.0;
 		yMax = 10.0;
+		
+		xMinIn = new JTextField(Double.toString(xMin));
+		xMaxIn = new JTextField(Double.toString(xMax));
+		yMinIn = new JTextField(Double.toString(yMin));
+		yMaxIn = new JTextField(Double.toString(yMax));
+		
 		System.out.println(equation.getPoints());
 		
 		
 		equationIn.setBounds(width, 10, 160, 30);
 		graphButton.setBounds(width + 45, 40, 70, 30);
+		
+		graphButton.setBackground(jElementColor);;
+		graphButton.setForeground(jTextColor);
+		
+		instruction.setForeground(jLabelColor);
+		instruction.setBounds(width + 20, equationIn.getY() + 35, 130, 60);
+		
+		equationIn.setBackground(jElementColor);
+		equationIn.setForeground(jTextColor);
+		equationIn.setCaretColor(jTextColor);
+		
 		graphButton.addActionListener(this);
 		
-		xMaxLab.setBounds(width + 35, 120, 45, 30);
-		xMinLab.setBounds(width + 35, xMaxLab.getY() + 40, 45, 30);
-		yMaxLab.setBounds(width + 35, xMinLab.getY() + 40, 45, 30);
-		yMinLab.setBounds(width + 35, yMaxLab.getY() + 40, 45, 30);
+		xMaxLab.setBounds(width + 10, 120, 45, 30);
+		xMinLab.setBounds(xMaxLab.getX(), xMaxLab.getY() + 40, 45, 30);
+		yMaxLab.setBounds(xMaxLab.getX(), xMinLab.getY() + 40, 45, 30);
+		yMinLab.setBounds(xMaxLab.getX(), yMaxLab.getY() + 40, 45, 30);
 		
-		xMaxIn.setBounds(xMaxLab.getX() + 45, xMaxLab.getY(), 45, 30);
-		xMinIn.setBounds(xMinLab.getX() + 45, xMinLab.getY(), 45, 30);
-		yMaxIn.setBounds(yMaxLab.getX() + 45, yMaxLab.getY(), 45, 30);
-		yMinIn.setBounds(yMaxLab.getX() + 45, yMinLab.getY(), 45, 30);
+		xMaxIn.setBounds(xMaxLab.getX() + 55, xMaxLab.getY(), 85, 30);
+		xMinIn.setBounds(xMinLab.getX() + 55, xMinLab.getY(), 85, 30);
+		yMaxIn.setBounds(yMaxLab.getX() + 55, yMaxLab.getY(), 85, 30);
+		yMinIn.setBounds(yMaxLab.getX() + 55, yMinLab.getY(), 85, 30);
 		
-		apply.setBounds(width + 20, yMinLab.getY() + 40, 120, 30);
-		apply.addActionListener(this);
+		xMinLab.setForeground(jLabelColor);
+		xMaxLab.setForeground(jLabelColor);
+		yMinLab.setForeground(jLabelColor);
+		yMaxLab.setForeground(jLabelColor);
+		
+		xMinIn.setBackground(jElementColor);
+		xMaxIn.setBackground(jElementColor);
+		yMinIn.setBackground(jElementColor);
+		yMaxIn.setBackground(jElementColor);
+		
+		xMinIn.setForeground(jTextColor);
+		xMaxIn.setForeground(jTextColor);
+		yMinIn.setForeground(jTextColor);
+		yMaxIn.setForeground(jTextColor);
+		
+		xMinIn.setCaretColor(jTextColor);
+		xMaxIn.setCaretColor(jTextColor);
+		yMinIn.setCaretColor(jTextColor);
+		yMaxIn.setCaretColor(jTextColor);
 		
 		panel.add(equationIn);
-		panel.add(graphButton);
+		//panel.add(graphButton);
+		panel.add(instruction);
 		
 		panel.add(xMinLab);
 		panel.add(xMaxLab);
@@ -74,45 +112,77 @@ public class Window extends JFrame implements ActionListener{
 		panel.add(yMinIn);
 		panel.add(yMaxIn);
 		
-		panel.add(apply);
+		Color backgroundColor = Color.decode("#222222");
+		panel.setBackground(backgroundColor);
 		
 		super.setName("Graphing Calculator");
 		super.setSize(width + 160, height);
 		super.setContentPane(panel);
 		super.setLayout(null);
+		super.addMouseListener(this);
 		super.setVisible(true);
+		
 	}
 	
 	public void paint(Graphics g) {
 		super.paint(g);
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setStroke(new BasicStroke(2));
-		Line2D yAxis = new Line2D.Float((width / 2) - (  (((int)xMax + (int)xMin) / 2) * ((width / 2) / (((int)xMax - (int)xMin) / 2))  ), 
+		Line2D yAxis = new Line2D.Double(((double)width / 2.0) - (  ((xMax + xMin) / 2.0) * (((double)width / 2.0) / ((xMax - xMin) / 2.0))  ), 
 										0, 
-										(width / 2) - (  (((int)xMax + (int)xMin) / 2) * ((width / 2) / (((int)xMax - (int)xMin) / 2))  ), 
+										((double)width / 2.0) - (  ((xMax + xMin) / 2.0) * (((double)width / 2.0) / ((xMax - (int)xMin) / 2.0))  ), 
 										height);
-		Line2D xAxis = new Line2D.Float(0, 
-										(height / 2) - (  (((int)yMax + (int)yMin) / 2) * ((height / 2) / (((int)yMax - (int)yMin) / 2))  ), 
+		Line2D xAxis = new Line2D.Double(0, 
+										((double)height / 2.0) + (  ((yMax + yMin) / 2.0) * (((double)height / 2.0) / ((yMax - yMin) / 2.0))  ), 
 										width, 
-										(height / 2) - (  (((int)yMax + (int)yMin) / 2) * ((height / 2) / (((int)yMax - (int)yMin) / 2))  ));
+										((double)height / 2.0) + (  ((yMax + yMin) / 2.0) * (((double)height / 2.0) / ((yMax - yMin) / 2.0))  ));
+		
+		Color axisColor = Color.decode("#666666");
+		g2.setColor(axisColor);
+		
 		g2.draw(yAxis);
 		g2.draw(xAxis);
+		
 		double y1 = 0;
 		double y2 = 0;
+		double x1 = 0;
+		double x2 = 0;
+		
+		double translateX = ((double)width / 2) - (  ((xMax + xMin) / 2.0) * (((double)width / 2.0) / ((xMax - xMin) / 2.0))  );
+		double translateY = ((double)height / 2.0) + (  ((yMax + yMin) / 2.0) * (((double)height / 2.0) / ((yMax - yMin) / 2.0))  );
+		
 		Line2D temp;
-		g2.setColor(Color.RED);
+		Color lineColor = Color.decode("#AAAAAA");
+		g2.setColor(lineColor);
+		
+		
 		for(int i = 0; i < equation.getPoints().size() - 1; i++) {
-			y1 = equation.getPoints().get(i).getY() + 300;
-			y2 = equation.getPoints().get(i + 1).getY() + 300;
 			
-			if(y1 <= height && y1 >= 0) {
-				temp = new Line2D.Double((int)equation.getPoints().get(i).getX() + (double)width / 2.0, 
-										(y1 + (2.0 * (((double)height / 2.0) - y1))), 
-									    (int)equation.getPoints().get(i + 1).getX() + (double)width / 2.0, 
-									    (y2 + (2.0 * (((double)height / 2.0) - y2))));
+			y1 = equation.getPoints().get(i).getY();
+			y2 = equation.getPoints().get(i + 1).getY();
+			x1 = equation.getPoints().get(i).getX();
+			x2 = equation.getPoints().get(i + 1).getX();
+			if(y1 + translateY <= height && y1 + translateY >= 0) {
+				if(i == 0) {
+					double test = equation.getPoints().get(0).getX() + translateX;
+					double test2 = xMax + xMin;
+					System.out.println("\nX1 = " + test + "\nMaxMin = " + xMax + "/" + xMin + "\n");
+				}
+				
+				/*
+				temp = new Line2D.Double(x1 + (double)width / 2.0, 
+										 y1 + (2.0 * (((double)height / 2.0) - y1)), 
+									     x2 + (double)width / 2.0, 
+									     y2 + (2.0 * (((double)height / 2.0) - y2)));
+				*/
+				temp = new Line2D.Double(x2 + translateX, 
+										 y2 + translateY - (y2 * 2), 
+									     x1 + translateX, 
+									     y1 + translateY - (y1 * 2));	
 				g2.draw(temp);
 			}
 		}
+		
 	}
 
 	@Override
@@ -120,11 +190,6 @@ public class Window extends JFrame implements ActionListener{
 		if(e.getSource() == graphButton) {
 			eq = equationIn.getText();
 			System.out.println("Text = " + eq);
-			equation = new Equation(eq, width, height, xMin, xMax, yMin, yMax);
-			super.repaint();
-		}
-		else if(e.getSource() == apply) {
-			System.out.println("TEST START");
 			if(!xMaxIn.getText().equals("")) {
 				xMax = Double.parseDouble(xMaxIn.getText());
 				System.out.println("xMax");
@@ -141,10 +206,70 @@ public class Window extends JFrame implements ActionListener{
 				yMin = Double.parseDouble(yMinIn.getText());
 				System.out.println("yMin");
 			}
-			equation = new Equation(eq, width, height, xMin, xMax, yMin, yMax);
+			if(eq.equals("")) {
+				equation = new Equation();
+			}
+			else {
+				equation = new Equation(eq, width, height, xMin, xMax, yMin, yMax);
+			}
 			super.repaint();
-			System.out.println("TEST END");
 		}
+		
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		if(e.getX() <= width) {
+			eq = equationIn.getText();
+			System.out.println("Text = " + eq);
+			if(!xMaxIn.getText().equals("")) {
+				xMax = Double.parseDouble(xMaxIn.getText());
+				System.out.println("xMax");
+			}
+			if(!xMinIn.getText().equals("")) {
+				xMin = Double.parseDouble(xMinIn.getText());
+				System.out.println("xMin");
+			}
+			if(!yMaxIn.getText().equals("")) {
+				yMax = Double.parseDouble(yMaxIn.getText());
+				System.out.println("yMax");
+			}
+			if(!yMinIn.getText().equals("")) {
+				yMin = Double.parseDouble(yMinIn.getText());
+				System.out.println("yMin");
+			}
+			if(eq.equals("")) {
+				equation = new Equation();
+			}
+			else {
+				equation = new Equation(eq, width, height, xMin, xMax, yMin, yMax);
+			}
+			super.repaint();
+		}
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
 		
 	}
 }
