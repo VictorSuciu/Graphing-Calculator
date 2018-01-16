@@ -12,33 +12,39 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 	JTextField equationIn = new JTextField();
 	JButton graphButton = new JButton("Graph");
 	JButton test = new JButton("test");
-	JLabel instruction = new JLabel("<html>Click anywhere on <br/>the plane to graph!</html>");
+	JLabel instruction = new JLabel("<html>Click anywhere on <br/>the plane to graph!</html>", SwingConstants.CENTER);
 	
 	JTextField xMinIn = new JTextField();
 	JTextField xMaxIn = new JTextField();
 	JTextField yMinIn = new JTextField();
 	JTextField yMaxIn = new JTextField();
 	
-	JLabel xMinLab = new JLabel("X Min:");
-	JLabel xMaxLab = new JLabel("X Max:");
-	JLabel yMinLab = new JLabel("Y Min:");
-	JLabel yMaxLab = new JLabel("Y Max:");
+	JLabel xMinLab = new JLabel("X Min:", SwingConstants.RIGHT);
+	JLabel xMaxLab = new JLabel("X Max:", SwingConstants.RIGHT);
+	JLabel yMinLab = new JLabel("Y Min:", SwingConstants.RIGHT);
+	JLabel yMaxLab = new JLabel("Y Max:", SwingConstants.RIGHT);
 	
 	String eq;
 	
 	int width = 600;
 	int height = 600;
+	int controlSize = 300;
 	
 	double xMin;
 	double xMax;
 	double yMin;
 	double yMax;
 	
-	Color jElementColor = Color.decode("#555555");
+	Color jElementColor = Color.decode("#454545");
 	Color jTextColor = Color.decode("#AAAAAA");
 	Color jLabelColor = Color.decode("#777777");
 	Color jHighlightColor = Color.decode("#DDDDDD");
 	Color controlsColor = Color.decode("#1C1C1C");
+	Color backgroundColor = Color.decode("#2A2A2A");
+	
+	Font labelFont = new Font("Century Gothic", Font.PLAIN, 22);
+	Font maxMinFont = new Font("Apple Mono", Font.CENTER_BASELINE, 14);
+	Font typeFont = new Font("Apple Mono", Font.CENTER_BASELINE, 13);
 	
 	Equation equation = new Equation();
 	
@@ -56,36 +62,49 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 		System.out.println(equation.getPoints());
 		
 		
-		equationIn.setBounds(0, 10, 160, 30);
+		equationIn.setBounds(0, 10, controlSize, 30);
 		graphButton.setBounds(width + 45, 40, 70, 30);
 		
 		graphButton.setBackground(jElementColor);;
 		graphButton.setForeground(jTextColor);
 		
 		instruction.setForeground(jLabelColor);
-		instruction.setBounds(20, equationIn.getY() + 35, 130, 60);
+		instruction.setBounds(0, equationIn.getY() + 35, controlSize, 60);
+		
+		instruction.setFont(labelFont);
 		
 		equationIn.setBackground(jElementColor);
 		equationIn.setForeground(jTextColor);
 		equationIn.setCaretColor(jTextColor);
 		equationIn.setSelectionColor(jHighlightColor);
+		equationIn.setFont(typeFont);
 		
 		graphButton.addActionListener(this);
 		
-		xMaxLab.setBounds(10, 120, 45, 30);
-		xMinLab.setBounds(xMaxLab.getX(), xMaxLab.getY() + 40, 45, 30);
-		yMaxLab.setBounds(xMaxLab.getX(), xMinLab.getY() + 40, 45, 30);
-		yMinLab.setBounds(xMaxLab.getX(), yMaxLab.getY() + 40, 45, 30);
+		xMaxLab.setBounds((controlSize - (65 + (controlSize / 2))) / 2, 150, 50, 30);
+		xMinLab.setBounds(xMaxLab.getX(), xMaxLab.getY() + 40, 50, 30);
+		yMaxLab.setBounds(xMaxLab.getX(), xMinLab.getY() + 40, 50, 30);
+		yMinLab.setBounds(xMaxLab.getX(), yMaxLab.getY() + 40, 50, 30);
 		
-		xMaxIn.setBounds(xMaxLab.getX() + 55, xMaxLab.getY(), 85, 30);
-		xMinIn.setBounds(xMinLab.getX() + 55, xMinLab.getY(), 85, 30);
-		yMaxIn.setBounds(yMaxLab.getX() + 55, yMaxLab.getY(), 85, 30);
-		yMinIn.setBounds(yMaxLab.getX() + 55, yMinLab.getY(), 85, 30);
+		xMaxIn.setBounds(xMaxLab.getX() + 60, xMaxLab.getY(), (controlSize / 2) + 15, 30);
+		xMinIn.setBounds(xMinLab.getX() + 60, xMinLab.getY(), (controlSize / 2) + 15, 30);
+		yMaxIn.setBounds(yMaxLab.getX() + 60, yMaxLab.getY(), (controlSize / 2) + 15, 30);
+		yMinIn.setBounds(yMaxLab.getX() + 60, yMinLab.getY(), (controlSize / 2) + 15, 30);
 		
 		xMinLab.setForeground(jLabelColor);
 		xMaxLab.setForeground(jLabelColor);
 		yMinLab.setForeground(jLabelColor);
 		yMaxLab.setForeground(jLabelColor);
+		
+		xMinLab.setFont(maxMinFont);
+		xMaxLab.setFont(maxMinFont);
+		yMinLab.setFont(maxMinFont);
+		yMaxLab.setFont(maxMinFont);
+		
+		xMinIn.setFont(typeFont);
+		xMaxIn.setFont(typeFont);
+		yMinIn.setFont(typeFont);
+		yMaxIn.setFont(typeFont);
 		
 		xMinIn.setBackground(jElementColor);
 		xMaxIn.setBackground(jElementColor);
@@ -121,16 +140,16 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 		controls.add(yMinIn);
 		controls.add(yMaxIn);
 		
-		Color backgroundColor = Color.decode("#222222");
+		
 		panel.setBackground(backgroundColor);
 		
-		controls.setBounds(width + 1, 0, 160, height);
+		controls.setBounds(width + 1, 0, controlSize, height);
 		controls.setBackground(controlsColor);
 		controls.setLayout(null);
 		panel.add(controls);
 		
 		super.setName("Graphing Calculator");
-		super.setSize(width + 160, height);
+		super.setSize(width + controlSize, height);
 		super.setContentPane(panel);
 		super.setLayout(null);
 		super.addMouseListener(this);
@@ -195,6 +214,13 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 									     x1 + translateX, 
 									     y1 + translateY - (y1 * 2));	
 				g2.draw(temp);
+			}
+			else if(y1 + translateY > height) {
+				temp = new Line2D.Double(x2 + translateX, 
+						 y2 + translateY - (y2 * 2), 
+					     x1 + translateX, 
+					     height);	
+				g2.draw(temp);	
 			}
 		}
 		

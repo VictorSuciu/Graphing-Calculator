@@ -179,10 +179,10 @@ public class Equation {
 				if(segmentedEq.get(index - 1).charAt(0) == ')') {
 					segmentedEq.add(index, "*");
 				}
-				if(isNum(segmentedEq.get(index).charAt(0)) != -1) {
+				if(isNum(segmentedEq.get(index - 1).charAt(0)) != -1) {
 					segmentedEq.add(index, "*");
 				}
-				else if(segmentedEq.get(index).charAt(0) == 'x') {
+				else if(segmentedEq.get(index - 1).charAt(0) == 'x') {
 					segmentedEq.add(index, "*");
 				}
 			}
@@ -190,10 +190,10 @@ public class Equation {
 				if(segmentedEq.get(index - 1).charAt(0) == ')') {
 					segmentedEq.add(index, "*");
 				}
-				if(isNum(segmentedEq.get(index).charAt(0)) != -1) {
+				if(isNum(segmentedEq.get(index - 1).charAt(0)) != -1) {
 					segmentedEq.add(index, "*");
 				}
-				else if(segmentedEq.get(index).charAt(0) == 'x') {
+				else if(segmentedEq.get(index - 1).charAt(0) == 'x') {
 					segmentedEq.add(index, "*");
 				}
 			}
