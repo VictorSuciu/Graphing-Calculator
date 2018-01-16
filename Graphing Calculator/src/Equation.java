@@ -21,13 +21,18 @@ public class Equation {
 	double xMax;
 	double yMin;
 	double yMax;
+	
 	public Equation() {
 		
 	}
 	public Equation(String s, int width, int height, double xMin, double xMax, double yMin, double yMax) {
 		equationString = s;
 		index = 0;
+		
 		segmentedEq = prepareString();
+		System.out.println(segmentedEq);
+		
+		implicitMultiplication();
 		System.out.println(segmentedEq);
 		
 		this.width = width;
@@ -45,14 +50,21 @@ public class Equation {
 	
 	
 	public void generatePoints() {
-		for(double i = 0 - ((double)width / 2.0); i <= (double)width / 2.0; i += 0.01) {
+		System.out.println("RAW 0 = " + f(0));
+		for(double i = ((1.0 / (xMax - xMin)) * (xMax + xMin) * 300.0) - (((double)width / 2.0)); i <= ((double)width / 2.0) + ((1.0 / (xMax - xMin)) * (xMax + xMin) * 300.0); i += 0.01) {
 			/*
 			points.add(new Point(i, (f((i + (((xMax + xMin) / 2) * (width / (xMax - xMin))) ) / ((width / 2) / ((xMax - xMin) / 2)    ) 
 					+ (((yMax + yMin) / 2) * (height / (yMax - yMin)))) * ((height / 2) / ((yMax - yMin) / 2)) ) 
 					- (((yMax + yMin) / 2) * (height / (yMax - yMin)))          ));
 			*/
-			points.add(new Point(i, (f(i / (width / ((xMax - xMin) / 2)))   ) * (height / ((yMax - yMin) / 2)) ));
+			points.add(new Point(i, (f(i / ((double)width / ((xMax - xMin))))   ) * ((double)height / ((yMax - yMin))) ));
+			
+			//double test = ((f(i / (width / ((xMax - xMin) / 2)))   ) * (height / ((yMax - yMin) / 2)) );
+			//System.out.println("X = " + i + "\nY = " + test + "\n");
+			
 		}
+		//System.out.println("Unstretched X = " + f(((double)width / 2.0) - 1.0));
+		
 	}
 	public ArrayList<Point> getPoints() {
 		return points;
@@ -118,6 +130,105 @@ public class Equation {
 				
 				
 			}
+		}
+	}
+	public void implicitMultiplication() {
+		index = segmentedEq.size() - 1;
+		while(index > 0) {
+									
+			if(isNum(segmentedEq.get(index).charAt(0)) != -1) {
+				if(segmentedEq.get(index - 1).charAt(0) == ')') {
+					segmentedEq.add(index, "*");
+				}
+				else if(segmentedEq.get(index - 1).charAt(0) == 'x') {
+					segmentedEq.add(index, "*");
+				}
+					
+			}
+			else if(segmentedEq.get(index).charAt(0) == '(') {
+				if(segmentedEq.get(index - 1).charAt(0) == ')') {
+					segmentedEq.add(index, "*");
+				}
+				else if(segmentedEq.get(index - 1).charAt(0) == 'x') {
+					segmentedEq.add(index, "*");
+				}
+				if(isNum(segmentedEq.get(index - 1).charAt(0)) != -1) {
+					segmentedEq.add(index, "*");
+				}
+			}
+			else if(segmentedEq.get(index).charAt(0) == 'x') {
+				if(segmentedEq.get(index - 1).charAt(0) == ')') {
+					segmentedEq.add(index, "*");
+				}
+				if(isNum(segmentedEq.get(index - 1).charAt(0)) != -1) {
+					segmentedEq.add(index, "*");
+				}
+			}
+			else if(segmentedEq.get(index).charAt(0) == 's') {
+				if(segmentedEq.get(index - 1).charAt(0) == ')') {
+					segmentedEq.add(index, "*");
+				}
+				if(isNum(segmentedEq.get(index - 1).charAt(0)) != -1) {
+					segmentedEq.add(index, "*");
+				}
+				else if(segmentedEq.get(index - 1).charAt(0) == 'x') {
+					segmentedEq.add(index, "*");
+				}
+			}
+			else if(segmentedEq.get(index).charAt(0) == 'c') {
+				if(segmentedEq.get(index - 1).charAt(0) == ')') {
+					segmentedEq.add(index, "*");
+				}
+				if(isNum(segmentedEq.get(index - 1).charAt(0)) != -1) {
+					segmentedEq.add(index, "*");
+				}
+				else if(segmentedEq.get(index - 1).charAt(0) == 'x') {
+					segmentedEq.add(index, "*");
+				}
+			}
+			else if(segmentedEq.get(index).charAt(0) == 't') {
+				if(segmentedEq.get(index - 1).charAt(0) == ')') {
+					segmentedEq.add(index, "*");
+				}
+				if(isNum(segmentedEq.get(index - 1).charAt(0)) != -1) {
+					segmentedEq.add(index, "*");
+				}
+				else if(segmentedEq.get(index - 1).charAt(0) == 'x') {
+					segmentedEq.add(index, "*");
+				}
+			}
+			
+			index--;
+			
+		}
+	}
+	public void correctOrderOfOperations() {
+		index = 0;
+		int parentheses = 0;
+		int operator1 = 0;
+		int operator2 = 0;
+		int currentOperator = 0;
+		while(index < segmentedEq.size()) {
+									
+			
+			if(segmentedEq.get(index).charAt(0) == '(') {
+				parentheses++;
+			}
+			if(segmentedEq.get(index).charAt(0) == ')') {
+				parentheses--;
+			}
+			if(segmentedEq.get(index).charAt(0) == '+' || segmentedEq.get(index).charAt(0) == '-') {
+				parentheses--;
+			}
+			if(segmentedEq.get(index).charAt(0) == '*' || segmentedEq.get(index).charAt(0) == '/') {
+				parentheses--;
+			}
+			if(segmentedEq.get(index).charAt(0) == '^') {
+				parentheses--;
+			}
+			
+			index++;
+			
 		}
 	}
 	public double f(double x) {
