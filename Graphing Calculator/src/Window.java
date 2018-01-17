@@ -36,6 +36,7 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 	double xMax;
 	double yMin;
 	double yMax;
+
 	
 	Color jElementColor = Color.decode("#454545");
 	Color jTextColor = Color.decode("#AAAAAA");
@@ -44,23 +45,33 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 	Color controlsColor = Color.decode("#1C1C1C");
 	Color backgroundColor = Color.decode("#2A2A2A");
 	
+	MyColor myBackColor;
+	MyColor myControlsColor;
+	MyColor myHighColor;
+	MyColor myLabelColor;
+	MyColor myTextColor;
+	MyColor myElementColor;
+	
 	Font labelFont = new Font("Century Gothic", Font.PLAIN, 22);
 	Font maxMinFont = new Font("Apple Mono", Font.CENTER_BASELINE, 14);
 	Font typeFont = new Font("Apple Mono", Font.CENTER_BASELINE, 13);
 	
 	Border textBorder = BorderFactory.createLineBorder(jElementColor);
 	
-	int r = 0;
-	int g = 0;
-	int b  = 0;
-	int colorCycle = 0;
-	int colorSpeed = 1;
-	
+	boolean repOnce = true;
+	 
 	Equation equation = new Equation();
 	
 	Timer timer = new Timer(1, this);
 	
 	public Window() {
+		
+		myBackColor = new MyColor(backgroundColor, 4);
+		myControlsColor = new MyColor(controlsColor, 3);
+		MyColor myHighColor;
+		myLabelColor = new MyColor(jLabelColor, 4);
+		MyColor myTextColor;
+		myElementColor = new MyColor(jElementColor, 4);
 		
 		timer.setInitialDelay(1);
 		timer.start();
@@ -170,12 +181,14 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 		controls.setLayout(null);
 		panel.add(controls);
 		
+
 		super.setName("Graphing Calculator");
 		super.setSize(width + controlSize, height);
 		super.setContentPane(panel);
 		super.setLayout(null);
 		super.addMouseListener(this);
 		super.setResizable(false);
+		super.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		super.setVisible(true);
 		
 	}
@@ -250,104 +263,68 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(e.getSource() == graphButton) {
-			eq = equationIn.getText();
-			System.out.println("Text = " + eq);
-			if(!xMaxIn.getText().equals("")) {
-				xMax = Double.parseDouble(xMaxIn.getText());
-				System.out.println("xMax");
-			}
-			if(!xMinIn.getText().equals("")) {
-				xMin = Double.parseDouble(xMinIn.getText());
-				System.out.println("xMin");
-			}
-			if(!yMaxIn.getText().equals("")) {
-				yMax = Double.parseDouble(yMaxIn.getText());
-				System.out.println("yMax");
-			}
-			if(!yMinIn.getText().equals("")) {
-				yMin = Double.parseDouble(yMinIn.getText());
-				System.out.println("yMin");
-			}
-			if(eq.equals("")) {
-				equation = new Equation();
-			}
-			else {
-				equation = new Equation(eq, width, height, xMin, xMax, yMin, yMax);
-			}
-			super.repaint();
-		}
-		if((r == 255 && g == 0 && b == 0) || colorCycle == 0) {
-			colorCycle = 0;
-			
-			if(r >= 0 && g <= 255) {
-				r-= colorSpeed;
-				g+= colorSpeed;
-			}
-			else {
-				colorCycle = 1;
-			}
-		}
-		else if((r == 0 && g == 255 && b == 0) || colorCycle == 1) {
-			colorCycle = 1;
-			if(g >= 0 && b <= 255) {
-				g-= colorSpeed;
-				b+= colorSpeed;
-			}
-			else {
-				colorCycle = 2;
-			}
-		}
-		else if((r == 0 && g == 0 && b == 255) || colorCycle == 2) {
-			colorCycle = 2;
-			if(b >= 0 && g <= 255 && r <= 255) {
-				g+= colorSpeed;
-				b-= colorSpeed;
-				r+= colorSpeed;
-			}
-			else {
-				colorCycle = 3;
-			}
-		}
-		else if((r == 255 && g == 255 && b == 0) || colorCycle == 3) {
-			colorCycle = 3;
-			if(r >= 0 && b <= 255) {
-				r-= colorSpeed;
-				b+= colorSpeed;
-			}
-			else {
-				colorCycle = 4;
-			}
-		}
-		else if((r == 0 && g == 255 && b == 255) || colorCycle == 4) {
-			colorCycle = 3;
-			if(r >= 0 && b <= 255) {
-				g-= colorSpeed;
-				r+= colorSpeed;
-			}
-			else {
-				colorCycle = 5;
-			}
-		}
-		if(r < 0) {
-			r = 0;
-		}
-		if(g < 0) {
-			g = 0;
-		}
-		if(b < 0) {
-			b = 0;
-		}
-		if(r > 255) {
-			r = 255;
-		}
-		if(g > 255) {
-			g = 255;
-		}
-		if(b > 255) {
-			b = 255;
-		}
 		
+		if(repOnce == true) {
+			
+		}
+		/*
+		if(panel.getBackground().getRed() + r > 255) {
+			cr = (panel.getBackground().getRed() + r) - 256;
+		}
+		else {
+			cr = (panel.getBackground().getRed() + r);
+		}
+		if(panel.getBackground().getGreen() + g > 255) {
+			cg = (panel.getBackground().getGreen() + g) - 256;
+		}
+		else {
+			cg = (panel.getBackground().getGreen() + g);
+		}
+		if(panel.getBackground().getBlue() + b > 255) {
+			cb = (panel.getBackground().getBlue() + b) - 256;
+		}
+		else {
+			cb = (panel.getBackground().getBlue() + b);
+		}
+		panel.setBackground(new Color(r, g, b));
+		
+		if(controls.getBackground().getRed() + r > 255) {
+			cr = (controls.getBackground().getRed() + r) - 256;
+		}
+		else {
+			cr = (controls.getBackground().getRed() + r);
+		}
+		if(controls.getBackground().getGreen() + g > 255) {
+			cg = (controls.getBackground().getGreen() + g) - 256;
+		}
+		else {
+			cg = (controls.getBackground().getGreen() + g);
+		}
+		if(controls.getBackground().getBlue() + b > 255) {
+			cb = (controls.getBackground().getBlue() + b) - 256;
+		}
+		else {
+			cb = (controls.getBackground().getBlue() + b);
+		}
+		controls.setBackground(new Color(r, g, b));
+		//controls.setBackground(new Color(r, g, b));
+		 
+		*/
+		myControlsColor.increment();
+		myBackColor.increment();
+		myElementColor.increment();
+		myLabelColor.increment();
+		
+		controls.setBackground(myControlsColor.getColor());
+		panel.setBackground(myBackColor.getColor());
+		equationIn.setBackground(myElementColor.getColor());
+		xMinLab.setForeground(myLabelColor.getColor());
+		xMaxLab.setForeground(myLabelColor.getColor());
+		yMinLab.setForeground(myLabelColor.getColor());
+		yMaxLab.setForeground(myLabelColor.getColor());
+		instruction.setForeground(myLabelColor.getColor());
+		
+		repOnce = false;
 		
 	}
 
@@ -402,7 +379,8 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
+
+	
 }
