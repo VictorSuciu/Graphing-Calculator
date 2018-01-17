@@ -1,5 +1,7 @@
 import javafx.scene.shape.*;
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
@@ -46,9 +48,28 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 	Font maxMinFont = new Font("Apple Mono", Font.CENTER_BASELINE, 14);
 	Font typeFont = new Font("Apple Mono", Font.CENTER_BASELINE, 13);
 	
+	Border textBorder = BorderFactory.createLineBorder(jElementColor);
+	
+	int r = 255;
+	int g = 0;
+	int b  = 0;
+	int colorCycle = 0;
+	int colorSpeed = 1;
+	int cr = 0;
+	int cg = 0;
+	int cb = 0;
+	int cOffset = 0;
+	
+	boolean repOnce = true;
 	Equation equation = new Equation();
 	
+	Timer timer = new Timer(1, this);
+	
 	public Window() {
+		
+		timer.setInitialDelay(1);
+		timer.start();
+		
 		xMin = -10.0;
 		xMax = 10.0;
 		yMin = -10.0;
@@ -78,6 +99,7 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 		equationIn.setCaretColor(jTextColor);
 		equationIn.setSelectionColor(jHighlightColor);
 		equationIn.setFont(typeFont);
+		equationIn.setBorder(textBorder);
 		
 		graphButton.addActionListener(this);
 		
@@ -126,6 +148,11 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 		yMinIn.setSelectionColor(jHighlightColor);
 		yMaxIn.setSelectionColor(jHighlightColor);
 		
+		xMinIn.setBorder(textBorder);
+		xMaxIn.setBorder(textBorder);
+		yMinIn.setBorder(textBorder);
+		yMaxIn.setBorder(textBorder);
+		
 		controls.add(equationIn);
 		//panel.add(graphButton);
 		controls.add(instruction);
@@ -147,6 +174,8 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 		controls.setBackground(controlsColor);
 		controls.setLayout(null);
 		panel.add(controls);
+		
+		
 		
 		super.setName("Graphing Calculator");
 		super.setSize(width + controlSize, height);
@@ -256,6 +285,139 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 			super.repaint();
 		}
 		
+		//System.out.println(panel.getBackground().getRed());
+		if(repOnce == true) {
+			cOffset = (backgroundColor.getRed() + backgroundColor.getGreen() + backgroundColor.getBlue()) / 3;
+			panel.setBackground(new Color(255 - cOffset, cOffset, 0));
+			System.out.println(cOffset);
+			
+			cOffset = (controlsColor.getRed() + controlsColor.getGreen() + controlsColor.getBlue()) / 3;
+			controls.setBackground(new Color(255 - cOffset, cOffset, 0));
+			System.out.println(cOffset);
+			
+			System.out.println("Updated Colors");
+		}
+		if((r == 255 && g == 0 && b == 0) || colorCycle == 0) {
+			colorCycle = 0;
+			
+			if(r > 0 && g < 255) {
+				r-= colorSpeed;
+				g+= colorSpeed;
+			}
+			else {
+				colorCycle = 1;
+			}
+		}
+		else if((r == 0 && g == 255 && b == 0) || colorCycle == 1) {
+			colorCycle = 1;
+			if(g > 0 && b < 255) {
+				g-= colorSpeed;
+				b+= colorSpeed;
+			}
+			else {
+				colorCycle = 2;
+			}
+		}
+		else if((r == 0 && g == 0 && b == 255) || colorCycle == 2) {
+			colorCycle = 2;
+			if(b > 0 && g < 255 && r < 255) {
+				g+= colorSpeed;
+				b-= colorSpeed;
+				r+= colorSpeed;
+			}
+			else {
+				colorCycle = 3;
+			}
+		}
+		else if((r == 255 && g == 255 && b == 0) || colorCycle == 3) {
+			colorCycle = 3;
+			if(r > 0 && b < 255) {
+				r-= colorSpeed;
+				b+= colorSpeed;
+			}
+			else {
+				colorCycle = 4;
+			}
+		}
+		else if((r == 0 && g == 255 && b == 255) || colorCycle == 4) {
+			colorCycle = 4;
+			if(r < 255 && b > 0) {
+				g-= colorSpeed;
+				r+= colorSpeed;
+			}
+			else {
+				colorCycle = 5;
+			}
+		}
+		else if((r == 255 && g == 0 && b == 255) || colorCycle == 5) {
+			colorCycle = 5;
+			if(b > 0) {
+				b-= colorSpeed;
+			}
+			else {
+				colorCycle = 0;
+			}
+		}
+		if(r < 0) {
+			r = 0;
+		}
+		if(g < 0) {
+			g = 0;
+		}
+		if(b < 0) {
+			b = 0;
+		}
+		if(r > 255) {
+			r = 255;
+		}
+		if(g > 255) {
+			g = 255;
+		}
+		if(b > 255) {
+			b = 255;
+		}
+		
+		if(panel.getBackground().getRed() + r > 255) {
+			cr = (panel.getBackground().getRed() + r) - 256;
+		}
+		else {
+			cr = (panel.getBackground().getRed() + r);
+		}
+		if(panel.getBackground().getGreen() + g > 255) {
+			cg = (panel.getBackground().getGreen() + g) - 256;
+		}
+		else {
+			cg = (panel.getBackground().getGreen() + g);
+		}
+		if(panel.getBackground().getBlue() + b > 255) {
+			cb = (panel.getBackground().getBlue() + b) - 256;
+		}
+		else {
+			cb = (panel.getBackground().getBlue() + b);
+		}
+		panel.setBackground(new Color(cr, cg, cb));
+		
+		if(controls.getBackground().getRed() + r > 255) {
+			cr = (controls.getBackground().getRed() + r) - 256;
+		}
+		else {
+			cr = (controls.getBackground().getRed() + r);
+		}
+		if(controls.getBackground().getGreen() + g > 255) {
+			cg = (controls.getBackground().getGreen() + g) - 256;
+		}
+		else {
+			cg = (controls.getBackground().getGreen() + g);
+		}
+		if(controls.getBackground().getBlue() + b > 255) {
+			cb = (controls.getBackground().getBlue() + b) - 256;
+		}
+		else {
+			cb = (controls.getBackground().getBlue() + b);
+		}
+		controls.setBackground(new Color(cr, cg, cb));
+		//controls.setBackground(new Color(r, g, b));
+		repOnce = false;
 	}
 
 	@Override
