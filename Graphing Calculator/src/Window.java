@@ -26,6 +26,9 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 	JLabel yMinLab = new JLabel("Y Min:", SwingConstants.RIGHT);
 	JLabel yMaxLab = new JLabel("Y Max:", SwingConstants.RIGHT);
 	
+	JCheckBox crazyColorOption = new JCheckBox();
+	JLabel crazyLab = new JLabel("Insane Color Mode:");
+	
 	String eq;
 	
 	int width = 600;
@@ -37,6 +40,7 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 	double yMin;
 	double yMax;
 
+	int crazyColorMode = 0;
 	
 	Color jElementColor = Color.decode("#454545");
 	Color jTextColor = Color.decode("#AAAAAA");
@@ -62,15 +66,15 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 	 
 	Equation equation = new Equation();
 	
-	Timer timer = new Timer(1, this);
+	Timer timer = new Timer(10, this);
 	
 	public Window() {
 		
 		myBackColor = new MyColor(backgroundColor, 4);
-		myControlsColor = new MyColor(controlsColor, 3);
-		MyColor myHighColor;
+		myControlsColor = new MyColor(controlsColor, 4);
+		myHighColor = new MyColor(jHighlightColor, 4);
 		myLabelColor = new MyColor(jLabelColor, 4);
-		MyColor myTextColor;
+		myTextColor = new MyColor(jTextColor, 4);
 		myElementColor = new MyColor(jElementColor, 4);
 		
 		timer.setInitialDelay(1);
@@ -119,6 +123,11 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 		yMaxIn.setBounds(yMaxLab.getX() + 60, yMaxLab.getY(), (controlSize / 2) + 15, 30);
 		yMinIn.setBounds(yMaxLab.getX() + 60, yMinLab.getY(), (controlSize / 2) + 15, 30);
 		
+		crazyLab.setBounds(yMinLab.getX() + 5, yMinLab.getY() + 45, 150, 30);
+		crazyColorOption.setBounds(crazyLab.getX() + 150, crazyLab.getY() + 2, 25, 25);
+		crazyColorOption.addActionListener(this);
+		crazyColorOption.setBackground(jLabelColor);
+		
 		xMinLab.setForeground(jLabelColor);
 		xMaxLab.setForeground(jLabelColor);
 		yMinLab.setForeground(jLabelColor);
@@ -128,6 +137,9 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 		xMaxLab.setFont(maxMinFont);
 		yMinLab.setFont(maxMinFont);
 		yMaxLab.setFont(maxMinFont);
+		
+		crazyLab.setForeground(jLabelColor);
+		crazyLab.setFont(maxMinFont);
 		
 		xMinIn.setFont(typeFont);
 		xMaxIn.setFont(typeFont);
@@ -173,6 +185,8 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 		controls.add(yMinIn);
 		controls.add(yMaxIn);
 		
+		controls.add(crazyColorOption);
+		controls.add(crazyLab);
 		
 		panel.setBackground(backgroundColor);
 		
@@ -250,13 +264,7 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 									     y1 + translateY - (y1 * 2));	
 				g2.draw(temp);
 			}
-			else if(y1 + translateY > height) {
-				temp = new Line2D.Double(x2 + translateX, 
-						 y2 + translateY - (y2 * 2), 
-					     x1 + translateX, 
-					     height);	
-				g2.draw(temp);	
-			}
+			
 		}
 		
 	}
@@ -264,66 +272,102 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		
-		if(repOnce == true) {
+		if(e.getSource() == crazyColorOption) {
+			crazyColorMode = Math.abs(crazyColorMode - 1);
+			System.out.println("Crazy = " + crazyColorMode);
+		}
+		
+		if(crazyColorMode == 1) {
+			myControlsColor.increment();
+			myBackColor.increment();
+			myElementColor.increment();
+			myLabelColor.increment();
+			myHighColor.increment();
+			myTextColor.increment();
 			
+			controls.setBackground(myControlsColor.getColor());
+			panel.setBackground(myBackColor.getColor());
+			
+			equationIn.setBackground(myElementColor.getColor());
+			equationIn.setForeground(myLabelColor.getColor());
+			equationIn.setSelectionColor(myHighColor.getColor());
+			equationIn.setCaretColor(myTextColor.getColor());
+			
+			xMinLab.setForeground(myLabelColor.getColor());
+			xMaxLab.setForeground(myLabelColor.getColor());
+			yMinLab.setForeground(myLabelColor.getColor());
+			yMaxLab.setForeground(myLabelColor.getColor());
+			
+			crazyLab.setForeground(myLabelColor.getColor());
+			
+			xMinIn.setBackground(myLabelColor.getColor());
+			xMaxIn.setBackground(myLabelColor.getColor());
+			yMinIn.setBackground(myLabelColor.getColor());
+			yMaxIn.setBackground(myLabelColor.getColor());
+			
+			xMinIn.setForeground(myTextColor.getColor());
+			xMaxIn.setForeground(myTextColor.getColor());
+			yMinIn.setForeground(myTextColor.getColor());
+			yMaxIn.setForeground(myTextColor.getColor());
+			
+			xMinIn.setSelectionColor(myHighColor.getColor());
+			xMaxIn.setSelectionColor(myHighColor.getColor());
+			yMinIn.setSelectionColor(myHighColor.getColor());
+			yMaxIn.setSelectionColor(myHighColor.getColor());
+			
+			xMinIn.setCaretColor(myTextColor.getColor());
+			xMaxIn.setForeground(myTextColor.getColor());
+			yMinIn.setForeground(myTextColor.getColor());
+			yMaxIn.setForeground(myTextColor.getColor());
+			
+			instruction.setForeground(myLabelColor.getColor());
 		}
-		/*
-		if(panel.getBackground().getRed() + r > 255) {
-			cr = (panel.getBackground().getRed() + r) - 256;
+		else if(crazyColorMode == 0) {
+			equationIn.setBackground(jElementColor);
+			equationIn.setForeground(jTextColor);
+			equationIn.setCaretColor(jTextColor);
+			equationIn.setSelectionColor(jHighlightColor);
+			equationIn.setFont(typeFont);
+			equationIn.setBorder(textBorder);
+			
+			xMinIn.setBackground(jElementColor);
+			xMaxIn.setBackground(jElementColor);
+			yMinIn.setBackground(jElementColor);
+			yMaxIn.setBackground(jElementColor);
+			
+			xMinIn.setForeground(jTextColor);
+			xMaxIn.setForeground(jTextColor);
+			yMinIn.setForeground(jTextColor);
+			yMaxIn.setForeground(jTextColor);
+			
+			xMinIn.setCaretColor(jTextColor);
+			xMaxIn.setCaretColor(jTextColor);
+			yMinIn.setCaretColor(jTextColor);
+			yMaxIn.setCaretColor(jTextColor);
+			
+			xMinIn.setSelectionColor(jHighlightColor);
+			xMaxIn.setSelectionColor(jHighlightColor);
+			yMinIn.setSelectionColor(jHighlightColor);
+			yMaxIn.setSelectionColor(jHighlightColor);
+			
+			xMinIn.setBorder(textBorder);
+			xMaxIn.setBorder(textBorder);
+			yMinIn.setBorder(textBorder);
+			
+			xMinLab.setForeground(jLabelColor);
+			xMaxLab.setForeground(jLabelColor);
+			yMinLab.setForeground(jLabelColor);
+			yMaxLab.setForeground(jLabelColor);
+			
+			crazyLab.setForeground(jLabelColor);
+			
+			instruction.setForeground(jLabelColor);
+			
+			controls.setBackground(controlsColor);
+			panel.setBackground(backgroundColor);
+			
+			crazyColorMode = 2;
 		}
-		else {
-			cr = (panel.getBackground().getRed() + r);
-		}
-		if(panel.getBackground().getGreen() + g > 255) {
-			cg = (panel.getBackground().getGreen() + g) - 256;
-		}
-		else {
-			cg = (panel.getBackground().getGreen() + g);
-		}
-		if(panel.getBackground().getBlue() + b > 255) {
-			cb = (panel.getBackground().getBlue() + b) - 256;
-		}
-		else {
-			cb = (panel.getBackground().getBlue() + b);
-		}
-		panel.setBackground(new Color(r, g, b));
-		
-		if(controls.getBackground().getRed() + r > 255) {
-			cr = (controls.getBackground().getRed() + r) - 256;
-		}
-		else {
-			cr = (controls.getBackground().getRed() + r);
-		}
-		if(controls.getBackground().getGreen() + g > 255) {
-			cg = (controls.getBackground().getGreen() + g) - 256;
-		}
-		else {
-			cg = (controls.getBackground().getGreen() + g);
-		}
-		if(controls.getBackground().getBlue() + b > 255) {
-			cb = (controls.getBackground().getBlue() + b) - 256;
-		}
-		else {
-			cb = (controls.getBackground().getBlue() + b);
-		}
-		controls.setBackground(new Color(r, g, b));
-		//controls.setBackground(new Color(r, g, b));
-		 
-		*/
-		myControlsColor.increment();
-		myBackColor.increment();
-		myElementColor.increment();
-		myLabelColor.increment();
-		
-		controls.setBackground(myControlsColor.getColor());
-		panel.setBackground(myBackColor.getColor());
-		equationIn.setBackground(myElementColor.getColor());
-		xMinLab.setForeground(myLabelColor.getColor());
-		xMaxLab.setForeground(myLabelColor.getColor());
-		yMinLab.setForeground(myLabelColor.getColor());
-		yMaxLab.setForeground(myLabelColor.getColor());
-		instruction.setForeground(myLabelColor.getColor());
-		
 		repOnce = false;
 		
 	}
