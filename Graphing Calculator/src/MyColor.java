@@ -7,6 +7,8 @@ public class MyColor {
 	int colorCycle;
 	int colorSpeed;
 	int cOffset;
+	double x = 0.0;
+	boolean oldIncrement = false;
 	
 	public MyColor(int r, int g, int b, int cSpeed) {
 		this.r = r;
@@ -26,7 +28,7 @@ public class MyColor {
 		colorCycle = 0;
 		prepareColor();
 	}
-	public void increment() {
+	public void oldIncrement() {
 		if((r == 255 && g == 0 && b == 0) || colorCycle == 0) {
 			colorCycle = 0;
 			
@@ -78,6 +80,36 @@ public class MyColor {
 		if(b > 255) {
 			b = 255;
 		}
+	}
+	public void increment() {
+		if(oldIncrement == true) {
+			oldIncrement();
+		}
+		else {
+			x += (double)colorSpeed;
+			if(x > 1000) {
+				x = 0;
+			}
+			
+			r = (int)(127.0 * Math.sin((x + (4.0 * (double)cOffset)) / ((500.0) / Math.PI)) + 128.0);;
+			g = (int)(127.0 * Math.sin((x + 333.33 + (4.0 * (double)cOffset)) / ((500.0) / Math.PI)) + 128.0);
+			b = (int)(127.0 * Math.sin((x + 666.66 + (4.0 * (double)cOffset)) / ((500.0) / Math.PI)) + 128.0);
+			/*
+			r = (int)((255.0 / Math.PI) * Math.asin(Math.sin((x - (4.0 * (double)cOffset)) / (500 / Math.PI))) + 128);
+			g = (int)((255.0 / Math.PI) * Math.asin(Math.sin((x - 333.33 - (4.0 * (double)cOffset)) / (500 / Math.PI))) + 128);
+			b = (int)((255.0 / Math.PI) * Math.asin(Math.sin((x - 666.66 - (4.0 * (double)cOffset)) / (500 / Math.PI))) + 128);
+			*/
+			if(r < 0) {
+				r = 0;
+			}
+			if(g < 0) {
+				g = 0;
+			}
+			if(b < 0) {
+				b = 0;
+			}
+		}
+		
 	}
 	public void prepareColor() {
 		cOffset = (r + g + b) / 3;
