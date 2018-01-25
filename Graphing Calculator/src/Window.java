@@ -26,6 +26,8 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 	JLabel yMinLab = new JLabel("Y Min:", SwingConstants.RIGHT);
 	JLabel yMaxLab = new JLabel("Y Max:", SwingConstants.RIGHT);
 	
+	int rangeLabelSize = 60;
+	
 	JCheckBox crazyColorOption = new JCheckBox();
 	JLabel crazyLab = new JLabel("Insane Color Mode:");
 	
@@ -34,6 +36,7 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 	int width = 600;
 	int height = 600;
 	int controlSize = 300;
+	int equationInHeight = 70;
 	
 	double xMin;
 	double xMax;
@@ -55,27 +58,38 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 	MyColor myLabelColor;
 	MyColor myTextColor;
 	MyColor myElementColor;
+	MyColor myHighText;
 	
-	Font labelFont = new Font("Century Gothic", Font.PLAIN, 22);
-	Font maxMinFont = new Font("Apple Mono", Font.CENTER_BASELINE, 14);
-	Font typeFont = new Font("Apple Mono", Font.CENTER_BASELINE, 13);
+	Font labelFont = new Font("Century Gothic", Font.PLAIN, 23);
+	Font maxMinFont = new Font("Apple Mono", Font.CENTER_BASELINE, 16);
+	Font typeFont = new Font("Apple Mono", Font.CENTER_BASELINE, 16);
+	Font equationFont = new Font("Apple Mono", Font.CENTER_BASELINE, 33);
 	
 	Border textBorder = BorderFactory.createLineBorder(jElementColor);
 	
 	boolean repOnce = true;
-	 
+	TopBarHeight topBarHeight;
 	Equation equation = new Equation();
 	
 	Timer timer = new Timer(10, this);
 	
+	int colorSpeed = 5;
+	
 	public Window() {
 		
-		myBackColor = new MyColor(backgroundColor, 4);
-		myControlsColor = new MyColor(controlsColor, 4);
-		myHighColor = new MyColor(jHighlightColor, 4);
-		myLabelColor = new MyColor(jLabelColor, 4);
-		myTextColor = new MyColor(jTextColor, 4);
-		myElementColor = new MyColor(jElementColor, 4);
+		//super.getContentPane().setPreferredSize(new Dimension(width + controlSize, height + equationInHeight));
+		//super.pack();
+		
+		
+		System.out.println("TBH = " + super.getInsets().top);
+		
+		myBackColor = new MyColor(backgroundColor, colorSpeed);
+		myControlsColor = new MyColor(controlsColor, colorSpeed);
+		myHighColor = new MyColor(jHighlightColor, colorSpeed);
+		myLabelColor = new MyColor(jLabelColor, colorSpeed);
+		myTextColor = new MyColor(jTextColor, colorSpeed);
+		myElementColor = new MyColor(jElementColor, colorSpeed);
+		myHighText = new MyColor(0, 0, 0, colorSpeed);
 		
 		timer.setInitialDelay(1);
 		timer.start();
@@ -93,14 +107,14 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 		System.out.println(equation.getPoints());
 		
 		
-		equationIn.setBounds(0, 10, controlSize, 30);
+		
 		graphButton.setBounds(width + 45, 40, 70, 30);
 		
 		graphButton.setBackground(jElementColor);;
 		graphButton.setForeground(jTextColor);
 		
 		instruction.setForeground(jLabelColor);
-		instruction.setBounds(0, equationIn.getY() + 35, controlSize, 60);
+		instruction.setBounds(0, 15, controlSize, 60);
 		
 		instruction.setFont(labelFont);
 		
@@ -108,25 +122,26 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 		equationIn.setForeground(jTextColor);
 		equationIn.setCaretColor(jTextColor);
 		equationIn.setSelectionColor(jHighlightColor);
-		equationIn.setFont(typeFont);
+		equationIn.setFont(equationFont);
 		equationIn.setBorder(textBorder);
+		equationIn.setSelectedTextColor(backgroundColor);
 		
 		graphButton.addActionListener(this);
 		
-		xMaxLab.setBounds((controlSize - (65 + (controlSize / 2))) / 2, 150, 50, 30);
-		xMinLab.setBounds(xMaxLab.getX(), xMaxLab.getY() + 40, 50, 30);
-		yMaxLab.setBounds(xMaxLab.getX(), xMinLab.getY() + 40, 50, 30);
-		yMinLab.setBounds(xMaxLab.getX(), yMaxLab.getY() + 40, 50, 30);
+		xMaxLab.setBounds((controlSize - (90 + (controlSize / 2))) / 2, 150, rangeLabelSize, 30);
+		xMinLab.setBounds(xMaxLab.getX(), xMaxLab.getY() + 40, rangeLabelSize, 30);
+		yMaxLab.setBounds(xMaxLab.getX(), xMinLab.getY() + 40, rangeLabelSize, 30);
+		yMinLab.setBounds(xMaxLab.getX(), yMaxLab.getY() + 40, rangeLabelSize, 30);
 		
-		xMaxIn.setBounds(xMaxLab.getX() + 60, xMaxLab.getY(), (controlSize / 2) + 15, 30);
-		xMinIn.setBounds(xMinLab.getX() + 60, xMinLab.getY(), (controlSize / 2) + 15, 30);
-		yMaxIn.setBounds(yMaxLab.getX() + 60, yMaxLab.getY(), (controlSize / 2) + 15, 30);
-		yMinIn.setBounds(yMaxLab.getX() + 60, yMinLab.getY(), (controlSize / 2) + 15, 30);
+		xMaxIn.setBounds(xMaxLab.getX() + 70, xMaxLab.getY(), (controlSize / 2) + 15, 30);
+		xMinIn.setBounds(xMinLab.getX() + 70, xMinLab.getY(), (controlSize / 2) + 15, 30);
+		yMaxIn.setBounds(yMaxLab.getX() + 70, yMaxLab.getY(), (controlSize / 2) + 15, 30);
+		yMinIn.setBounds(yMaxLab.getX() + 70, yMinLab.getY(), (controlSize / 2) + 15, 30);
 		
-		crazyLab.setBounds(yMinLab.getX() + 5, yMinLab.getY() + 45, 150, 30);
-		crazyColorOption.setBounds(crazyLab.getX() + 150, crazyLab.getY() + 2, 25, 25);
+		crazyLab.setBounds(yMinLab.getX() + 10, yMinLab.getY() + 45, 170, 30);
+		crazyColorOption.setBounds(crazyLab.getX() + 160, crazyLab.getY() + 2, 25, 25);
 		crazyColorOption.addActionListener(this);
-		crazyColorOption.setBackground(jLabelColor);
+		crazyColorOption.setOpaque(false);
 		
 		xMinLab.setForeground(jLabelColor);
 		xMaxLab.setForeground(jLabelColor);
@@ -166,12 +181,17 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 		yMinIn.setSelectionColor(jHighlightColor);
 		yMaxIn.setSelectionColor(jHighlightColor);
 		
+		xMinIn.setSelectedTextColor(backgroundColor);
+		xMaxIn.setSelectedTextColor(backgroundColor);
+		yMinIn.setSelectedTextColor(backgroundColor);
+		yMaxIn.setSelectedTextColor(backgroundColor);
+		
 		xMinIn.setBorder(textBorder);
 		xMaxIn.setBorder(textBorder);
 		yMinIn.setBorder(textBorder);
 		yMaxIn.setBorder(textBorder);
 		
-		controls.add(equationIn);
+		//controls.add(equationIn);
 		//panel.add(graphButton);
 		controls.add(instruction);
 		
@@ -190,35 +210,41 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 		
 		panel.setBackground(backgroundColor);
 		
-		controls.setBounds(width + 1, 0, controlSize, height);
+		
 		controls.setBackground(controlsColor);
 		controls.setLayout(null);
 		panel.add(controls);
+		panel.add(equationIn);
 		
-
+		
 		super.setName("Graphing Calculator");
-		super.setSize(width + controlSize, height);
+		super.setSize(width + controlSize, height + equationInHeight + super.getInsets().top);
 		super.setContentPane(panel);
 		super.setLayout(null);
 		super.addMouseListener(this);
 		super.setResizable(false);
 		super.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		super.setVisible(true);
-		
+		System.out.println("TBH1 = " + super.getInsets().top);
+		super.setSize(width + controlSize, height + equationInHeight + super.getInsets().top);
+		topBarHeight.init(super.getInsets().top);
+		controls.setBounds(width + 1, 0, controlSize, height);
+		equationIn.setBounds(0, height, width + controlSize, equationInHeight);
 	}
 	
 	public void paint(Graphics g) {
 		super.paint(g);
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setStroke(new BasicStroke(2));
+		
 		Line2D yAxis = new Line2D.Double(((double)width / 2.0) - (  ((xMax + xMin) / 2.0) * (((double)width / 2.0) / ((xMax - xMin) / 2.0))  ), 
-										0, 
-										((double)width / 2.0) - (  ((xMax + xMin) / 2.0) * (((double)width / 2.0) / ((xMax - (int)xMin) / 2.0))  ), 
-										height);
+										topBarHeight.height + 0, 
+										((double)width / 2.0) - (  ((xMax + xMin) / 2.0) * (((double)width / 2.0) / ((xMax - xMin) / 2.0))  ), 
+										topBarHeight.height + height);
 		Line2D xAxis = new Line2D.Double(0, 
-										((double)height / 2.0) + (  ((yMax + yMin) / 2.0) * (((double)height / 2.0) / ((yMax - yMin) / 2.0))  ), 
+										topBarHeight.height + ((double)height / 2.0) + (  ((yMax + yMin) / 2.0) * (((double)height / 2.0) / ((yMax - yMin) / 2.0))  ), 
 										width, 
-										((double)height / 2.0) + (  ((yMax + yMin) / 2.0) * (((double)height / 2.0) / ((yMax - yMin) / 2.0))  ));
+										topBarHeight.height + ((double)height / 2.0) + (  ((yMax + yMin) / 2.0) * (((double)height / 2.0) / ((yMax - yMin) / 2.0))  ));
 		
 		Color axisColor = Color.decode("#666666");
 		g2.setColor(axisColor);
@@ -245,7 +271,10 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 			y2 = equation.getPoints().get(i + 1).getY();
 			x1 = equation.getPoints().get(i).getX();
 			x2 = equation.getPoints().get(i + 1).getX();
-			if(y1 + translateY <= height && y1 + translateY >= 0) {
+			
+			//y1 + translateY  - (y2 * 2) <= height && y1 + translateY - (y2 * 2)  >= 0
+			
+			if(y1 + translateY  - (y2 * 2) <= height && y1 + translateY - (y2 * 2)  >= 0) {
 				if(i == 0) {
 					double test = equation.getPoints().get(0).getX() + translateX;
 					double test2 = xMax + xMin;
@@ -259,9 +288,9 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 									     y2 + (2.0 * (((double)height / 2.0) - y2)));
 				*/
 				temp = new Line2D.Double(x2 + translateX, 
-										 y2 + translateY - (y2 * 2), 
+										 y2 + translateY - (y2 * 2) + topBarHeight.height, 
 									     x1 + translateX, 
-									     y1 + translateY - (y1 * 2));	
+									     y1 + translateY - (y1 * 2) + topBarHeight.height);	
 				g2.draw(temp);
 			}
 			
@@ -284,6 +313,7 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 			myLabelColor.increment();
 			myHighColor.increment();
 			myTextColor.increment();
+			myHighText.increment();
 			
 			controls.setBackground(myControlsColor.getColor());
 			panel.setBackground(myBackColor.getColor());
@@ -292,6 +322,7 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 			equationIn.setForeground(myLabelColor.getColor());
 			equationIn.setSelectionColor(myHighColor.getColor());
 			equationIn.setCaretColor(myTextColor.getColor());
+			equationIn.setSelectedTextColor(myHighText.getColor());
 			
 			xMinLab.setForeground(myLabelColor.getColor());
 			xMaxLab.setForeground(myLabelColor.getColor());
@@ -300,10 +331,15 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 			
 			crazyLab.setForeground(myLabelColor.getColor());
 			
-			xMinIn.setBackground(myLabelColor.getColor());
-			xMaxIn.setBackground(myLabelColor.getColor());
-			yMinIn.setBackground(myLabelColor.getColor());
-			yMaxIn.setBackground(myLabelColor.getColor());
+			xMinIn.setBackground(myElementColor.getColor());
+			xMaxIn.setBackground(myElementColor.getColor());
+			yMinIn.setBackground(myElementColor.getColor());
+			yMaxIn.setBackground(myElementColor.getColor());
+			
+			xMinIn.setSelectedTextColor(myHighText.getColor());
+			xMaxIn.setSelectedTextColor(myHighText.getColor());
+			yMinIn.setSelectedTextColor(myHighText.getColor());
+			yMaxIn.setSelectedTextColor(myHighText.getColor());
 			
 			xMinIn.setForeground(myTextColor.getColor());
 			xMaxIn.setForeground(myTextColor.getColor());
@@ -327,8 +363,14 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 			equationIn.setForeground(jTextColor);
 			equationIn.setCaretColor(jTextColor);
 			equationIn.setSelectionColor(jHighlightColor);
-			equationIn.setFont(typeFont);
+			equationIn.setFont(equationFont);
 			equationIn.setBorder(textBorder);
+			equationIn.setSelectedTextColor(backgroundColor);
+			
+			xMinIn.setSelectedTextColor(backgroundColor);
+			xMaxIn.setSelectedTextColor(backgroundColor);
+			yMinIn.setSelectedTextColor(backgroundColor);
+			yMaxIn.setSelectedTextColor(backgroundColor);
 			
 			xMinIn.setBackground(jElementColor);
 			xMaxIn.setBackground(jElementColor);

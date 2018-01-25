@@ -108,6 +108,21 @@ public class Equation {
 			else if(isSQRT() == true) {
 				ret.add("sqrt");
 			}
+			else if(isMod() == true) {
+				ret.add("mod");
+			}
+			else if(isArcSin() == true) {
+				index += 4;
+				ret.add("arcsin");
+			}
+			else if(isArcCos() == true) {
+				index += 4;
+				ret.add("arccos");
+			}
+			else if(isArcTan() == true) {
+				index += 4;
+				ret.add("arctan");
+			}
 			//spacedEquation += " ";
 			if(gotNum == false) {
 				index++;
@@ -187,6 +202,17 @@ public class Equation {
 				}
 			}
 			else if(segmentedEq.get(index).charAt(0) == 't') {
+				if(segmentedEq.get(index - 1).charAt(0) == ')') {
+					segmentedEq.add(index, "*");
+				}
+				if(isNum(segmentedEq.get(index - 1).charAt(0)) != -1) {
+					segmentedEq.add(index, "*");
+				}
+				else if(segmentedEq.get(index - 1).charAt(0) == 'x') {
+					segmentedEq.add(index, "*");
+				}
+			}
+			else if(segmentedEq.get(index).charAt(0) == 'a') {
 				if(segmentedEq.get(index - 1).charAt(0) == ')') {
 					segmentedEq.add(index, "*");
 				}
@@ -289,9 +315,24 @@ public class Equation {
 				index++;
 				return f(Math.tan(f(x)));
 			}
+			else if(segmentedEq.get(index).equals("arcsin")) {
+				index++;
+				return f(Math.asin(f(x)));
+			}
+			else if(segmentedEq.get(index).equals("arccos")) {
+				index++;
+				return f(Math.acos(f(x)));
+			}
+			else if(segmentedEq.get(index).equals("arctan")) {
+				index++;
+				return f(Math.atan(f(x)));
+			}
 			else if(segmentedEq.get(index).equals("sqrt")) {
 				index++;
 				return f(Math.sqrt(f(x)));
+			}
+			else if(segmentedEq.get(index).equals("mod")) {
+				return f(x) % x;
 			}
 			else if(isNumBool(segmentedEq.get(index).charAt(0)) == true) {
 				double num = Double.parseDouble(segmentedEq.get(index));
@@ -364,7 +405,58 @@ public class Equation {
 			return false;
 		}
 	}
-	
+	private boolean isMod() {
+		if(index < equationString.length() - 2) {
+			if(equationString.substring(index, index + 3).equals("mod")) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+		else {
+			return false;
+		}
+	}
+	private boolean isArcSin() {
+		if(index < equationString.length() - 5) {
+			if(equationString.substring(index, index + 6).equals("arcsin")) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+		else {
+			return false;
+		}
+	}
+	private boolean isArcCos() {
+		if(index < equationString.length() - 5) {
+			if(equationString.substring(index, index + 6).equals("arccos")) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+		else {
+			return false;
+		}
+	}
+	private boolean isArcTan() {
+		if(index < equationString.length() - 5) {
+			if(equationString.substring(index, index + 6).equals("arctan")) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+		else {
+			return false;
+		}
+	}
 	private String getNum() {
 		String numString = "";
 		
