@@ -36,6 +36,7 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 	int width = 600;
 	int height = 600;
 	int controlSize = 300;
+	int equationInHeight = 70;
 	
 	double xMin;
 	double xMax;
@@ -62,11 +63,14 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 	Font labelFont = new Font("Century Gothic", Font.PLAIN, 23);
 	Font maxMinFont = new Font("Apple Mono", Font.CENTER_BASELINE, 16);
 	Font typeFont = new Font("Apple Mono", Font.CENTER_BASELINE, 16);
+
+	Font equationFont = new Font("Apple Mono", Font.CENTER_BASELINE, 33);
+
 	
 	Border textBorder = BorderFactory.createLineBorder(jElementColor);
 	
 	boolean repOnce = true;
-	 
+	TopBarHeight topBarHeight;
 	Equation equation = new Equation();
 	
 	Timer timer = new Timer(10, this);
@@ -74,6 +78,11 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 	int colorSpeed = 5;
 	
 	public Window() {
+		
+
+		
+		
+		System.out.println("TBH = " + super.getInsets().top);
 		
 		myBackColor = new MyColor(backgroundColor, colorSpeed);
 		myControlsColor = new MyColor(controlsColor, colorSpeed);
@@ -99,14 +108,14 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 		System.out.println(equation.getPoints());
 		
 		
-		equationIn.setBounds(0, 10, controlSize, 30);
+		
 		graphButton.setBounds(width + 45, 40, 70, 30);
 		
 		graphButton.setBackground(jElementColor);;
 		graphButton.setForeground(jTextColor);
 		
 		instruction.setForeground(jLabelColor);
-		instruction.setBounds(0, equationIn.getY() + 35, controlSize, 60);
+		instruction.setBounds(0, 15, controlSize, 60);
 		
 		instruction.setFont(labelFont);
 		
@@ -114,7 +123,7 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 		equationIn.setForeground(jTextColor);
 		equationIn.setCaretColor(jTextColor);
 		equationIn.setSelectionColor(jHighlightColor);
-		equationIn.setFont(typeFont);
+		equationIn.setFont(equationFont);
 		equationIn.setBorder(textBorder);
 		equationIn.setSelectedTextColor(backgroundColor);
 		
@@ -183,7 +192,7 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 		yMinIn.setBorder(textBorder);
 		yMaxIn.setBorder(textBorder);
 		
-		controls.add(equationIn);
+		//controls.add(equationIn);
 		//panel.add(graphButton);
 		controls.add(instruction);
 		
@@ -202,35 +211,45 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 		
 		panel.setBackground(backgroundColor);
 		
-		controls.setBounds(width + 1, 0, controlSize, height);
+		
 		controls.setBackground(controlsColor);
 		controls.setLayout(null);
 		panel.add(controls);
+		panel.add(equationIn);
 		
-
+		
 		super.setName("Graphing Calculator");
-		super.setSize(width + controlSize, height);
+		super.setSize(width + controlSize, height + equationInHeight + super.getInsets().top);
 		super.setContentPane(panel);
 		super.setLayout(null);
 		super.addMouseListener(this);
 		super.setResizable(false);
 		super.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		super.setVisible(true);
-		
+		System.out.println("TBH1 = " + super.getInsets().top);
+		super.setSize(width + controlSize, height + equationInHeight + super.getInsets().top);
+		topBarHeight.init(super.getInsets().top);
+		controls.setBounds(width + 1, 0, controlSize, height);
+		equationIn.setBounds(0, height, width + controlSize, equationInHeight);
+		equationIn.grabFocus();
 	}
 	
 	public void paint(Graphics g) {
 		super.paint(g);
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setStroke(new BasicStroke(2));
+		
 		Line2D yAxis = new Line2D.Double(((double)width / 2.0) - (  ((xMax + xMin) / 2.0) * (((double)width / 2.0) / ((xMax - xMin) / 2.0))  ), 
-										0, 
+										topBarHeight.height, 
 										((double)width / 2.0) - (  ((xMax + xMin) / 2.0) * (((double)width / 2.0) / ((xMax - xMin) / 2.0))  ), 
-										height);
+										topBarHeight.height + height);
+
+;
+
 		Line2D xAxis = new Line2D.Double(0, 
-										((double)height / 2.0) + (  ((yMax + yMin) / 2.0) * (((double)height / 2.0) / ((yMax - yMin) / 2.0))  ), 
+										topBarHeight.height + ((double)height / 2.0) + (  ((yMax + yMin) / 2.0) * (((double)height / 2.0) / ((yMax - yMin) / 2.0))  ), 
 										width, 
-										((double)height / 2.0) + (  ((yMax + yMin) / 2.0) * (((double)height / 2.0) / ((yMax - yMin) / 2.0))  ));
+										topBarHeight.height + ((double)height / 2.0) + (  ((yMax + yMin) / 2.0) * (((double)height / 2.0) / ((yMax - yMin) / 2.0))  ));
 		
 		Color axisColor = Color.decode("#666666");
 		g2.setColor(axisColor);
@@ -258,9 +277,9 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 			x1 = equation.getPoints().get(i).getX();
 			x2 = equation.getPoints().get(i + 1).getX();
 			
-			//y1 + translateY  - (y2 * 2) <= height && y1 + translateY - (y2 * 2)  >= 0
+			//y2 + translateY  - (y2 * 2) <= height && y2 + translateY - (y2 * 2)  >= 0
 			
-			if(y1 + translateY  - (y2 * 2) <= height && y1 + translateY - (y2 * 2)  >= 0) {
+			if(y2 + translateY  - (y2 * 2) <= height && y2 + translateY - (y2 * 2)  >= 0) {
 				if(i == 0) {
 					double test = equation.getPoints().get(0).getX() + translateX;
 					double test2 = xMax + xMin;
@@ -274,14 +293,14 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 									     y2 + (2.0 * (((double)height / 2.0) - y2)));
 				*/
 				temp = new Line2D.Double(x2 + translateX, 
-										 y2 + translateY - (y2 * 2), 
+										 y2 + translateY - (y2 * 2) + topBarHeight.height, 
 									     x1 + translateX, 
-									     y1 + translateY - (y1 * 2));	
+									     y1 + translateY - (y1 * 2) + topBarHeight.height);	
 				g2.draw(temp);
 			}
 			
 		}
-		
+		equationIn.repaint();
 	}
 
 	@Override
@@ -349,7 +368,7 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 			equationIn.setForeground(jTextColor);
 			equationIn.setCaretColor(jTextColor);
 			equationIn.setSelectionColor(jHighlightColor);
-			equationIn.setFont(typeFont);
+			equationIn.setFont(equationFont);
 			equationIn.setBorder(textBorder);
 			equationIn.setSelectedTextColor(backgroundColor);
 			
