@@ -295,7 +295,7 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 			}
 			
 		}
-		
+		equationIn.repaint();
 	}
 
 	@Override
