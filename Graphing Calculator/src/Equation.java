@@ -10,6 +10,7 @@ public class Equation {
 	String validItems = "0 1 2 3 4 5 6 7 8 9 + - * / ^ ( ) . x";
 	char[] nums = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
 	char[] symbols = {'(', ')', '+', '-', '*', '/', '^', '|'}; 
+	char[] operators = {'+', '-', '*', '/', '^'}; 
 	int index;
 	double thisX = 0;
 	int absCount = 0;
@@ -43,7 +44,11 @@ public class Equation {
 		this.yMin = yMin;
 		this.yMax = yMax;
 		
-		index = -1;
+		index = 0;
+		correctOrderOfOperations();
+		
+		
+		index = segmentedEq.size();
 		
 		generatePoints();
 	}
@@ -72,6 +77,7 @@ public class Equation {
 	
 	private ArrayList<String> prepareString() {
 		ArrayList<String> ret = new ArrayList();
+		ret.add("(");
 		index = 0;
 		char current;
 		int isNum;
@@ -129,6 +135,7 @@ public class Equation {
 			}
 			gotNum = false;
 		}
+		ret.add(")");
 		return ret;
 	}
 	private void generateEquation() {
@@ -229,67 +236,128 @@ public class Equation {
 		}
 	}
 	public void correctOrderOfOperations() {
-		index = 0;
-		int parentheses = 0;
-		int operator1 = 0;
-		int operator2 = 0;
-		int currentOperator = 0;
-		while(index < segmentedEq.size()) {
-									
+		
+		int preOpIndex = 0;
+		int currentOpIndex = 0;
+		int powerCount = 0;
+		int bal = 0;
+		char currentOpChar = ' ';
+		char preOpChar = ' ';
+		
+		
+		//!isSymbol(segmentedEq.get(index).charAt(0)).equals("")
+		while(true) {	
+			if(getPrecedence(segmentedEq.get(index).charAt(0)) != -1) {
+				preOpIndex = currentOpIndex;
+				currentOpIndex = index;
+				preOpChar = currentOpChar;
+				currentOpChar = segmentedEq.get(index).charAt(0);
+				
+				if(preOpChar != ' ' && currentOpChar != ' ') {
+					if(preOpChar == '^' && currentOpChar != '^') {
+						for(int i = 0; i < powerCount; i++) {
+							segmentedEq.add(index, ")");
+							index++;
+						}
+						powerCount = 0;
+					}
+					else if(getPrecedence(preOpChar) < getPrecedence(currentOpChar)) {
+						segmentedEq.add(preOpIndex + 1, "(");
+						index++;
+						if(currentOpChar != '^') {
+							bal++;
+						}
+					}
+					else if(getPrecedence(preOpChar) > getPrecedence(currentOpChar)) {
+						segmentedEq.add(currentOpIndex, ")");
+						index++;
+						bal--;
+						
+					}
+					else if(currentOpChar == '^') {
+						powerCount++;
+						if(preOpChar == '^') {
+							segmentedEq.add(preOpIndex + 1, "(");
+							index++;
+						}
+					}
+					
+				}
+			}
+			else if(isSymbol(segmentedEq.get(index).charAt(0)).equals('(')) {
+				index++;
+				System.out.println("NESTED CALL");
+				correctOrderOfOperations();
+				
+			}
+			else if(isSymbol(segmentedEq.get(index).charAt(0)).equals(')')) {
+				for(int i = 0; i < bal + powerCount; i++) {
+					segmentedEq.add(index, ")");
+					index++;
+				}
+				break;
+			}
 			
-			if(segmentedEq.get(index).charAt(0) == '(') {
-				parentheses++;
-			}
-			if(segmentedEq.get(index).charAt(0) == ')') {
-				parentheses--;
-			}
-			if(segmentedEq.get(index).charAt(0) == '+' || segmentedEq.get(index).charAt(0) == '-') {
-				parentheses--;
-			}
-			if(segmentedEq.get(index).charAt(0) == '*' || segmentedEq.get(index).charAt(0) == '/') {
-				parentheses--;
-			}
-			if(segmentedEq.get(index).charAt(0) == '^') {
-				parentheses--;
-			}
-			
+			//(x + (3 * (4 ^ (x ^ (2 + 3)))))
+			//(x + 3 / 2 + (x + 1 / 5) * 1)
+			System.out.println(preOpChar + " " + currentOpChar + " " + segmentedEq);
 			index++;
-			
 		}
+		for(int i = 0; i < powerCount + bal; i++) {
+			segmentedEq.add(index, ")");
+			index++;
+		}
+		index++;
+	}
+	
+	public int getPrecedence(char c) {
+		if(c == '+' || c == '-') {
+			return 1;
+		}
+		else if(c == '*' || c == '/') {
+			return 2;
+		}
+		else if(c == '^') {
+			return 3;
+		}
+		else {
+			return -1;
+		}
+		
 	}
 	public double f(double x) {
 		boolean power = false;
-		index++;
+		index--;
 		//System.out.println(index + " " + eq);
-		if(index == 0) {
+		if(index == segmentedEq.size() - 1) {
 			thisX = x;
-			//System.out.println("thisX = " + thisX);
+			//System.out.println("Set X");
 		}
-		if(index < segmentedEq.size()) {
-			if(segmentedEq.get(index).equals("(")) {
+		if(index >= 0) {
+			if(segmentedEq.get(index).equals(")")) {
 				return f(f(x));
 			}
-			else if(segmentedEq.get(index).equals(")")) {
+			else if(segmentedEq.get(index).equals("(")) {
 				return x;
 			}
 			else if(segmentedEq.get(index).equals("x")) {
 				return f(thisX);
 			}
 			else if(segmentedEq.get(index).equals("+")) {
-				return x + f(x);
+				return f(x) + x;
 			}
 			else if(segmentedEq.get(index).equals("-")) {
-				return x - f(x);
+				return f(x) - x;
 			}
 			else if(segmentedEq.get(index).equals("*")) {
-				return x * f(x);
+				return f(x) * x;
 			}
 			else if(segmentedEq.get(index).equals("/")) {
-				return x / f(x);
+				return f(x) / x;
 			}
 			
 			else if(segmentedEq.get(index).equals("^")) {
-				return Math.pow(x, f(x));
+				return Math.pow(f(x), x);
 			}
 			else if(segmentedEq.get(index).equals("|")) {
 				absCount++;
@@ -304,35 +372,35 @@ public class Equation {
 				
 			}
 			else if(segmentedEq.get(index).equals("sin")) {
-				index++;
-				return f(Math.sin(f(x)));
+				//index++;
+				return f(Math.sin(x));
 			}
 			else if(segmentedEq.get(index).equals("cos")) {
-				index++;
-				return f(Math.cos(f(x)));
+				//index++;
+				return f(Math.cos(x));
 			}
 			else if(segmentedEq.get(index).equals("tan")) {
-				index++;
-				return f(Math.tan(f(x)));
+				//index++;
+				return f(Math.tan(x));
 			}
 			else if(segmentedEq.get(index).equals("arcsin")) {
-				index++;
-				return f(Math.asin(f(x)));
+				//index++;
+				return f(Math.asin(x));
 			}
 			else if(segmentedEq.get(index).equals("arccos")) {
-				index++;
-				return f(Math.acos(f(x)));
+				//index++;
+				return f(Math.acos(x));
 			}
 			else if(segmentedEq.get(index).equals("arctan")) {
-				index++;
-				return f(Math.atan(f(x)));
+				//index++;
+				return f(Math.atan(x));
 			}
 			else if(segmentedEq.get(index).equals("sqrt")) {
-				index++;
-				return f(Math.sqrt(f(x)));
+				//index++;
+				return f(Math.sqrt(x));
 			}
 			else if(segmentedEq.get(index).equals("mod")) {
-				return f(x) % x;
+				return x % f(x);
 			}
 			else if(isNumBool(segmentedEq.get(index).charAt(0)) == true) {
 				double num = Double.parseDouble(segmentedEq.get(index));
@@ -345,7 +413,7 @@ public class Equation {
 		}
 		else {
 			absCount = 2;
-			index = -1;
+			index = segmentedEq.size();
 			//System.out.println("x = " + x);
 			//System.out.println();
 			return x;
