@@ -243,17 +243,28 @@ public class Equation {
 		int bal = 0;
 		char currentOpChar = ' ';
 		char preOpChar = ' ';
-		
+		boolean foundHigher = false;
+		boolean isNegative = false;
 		
 		//!isSymbol(segmentedEq.get(index).charAt(0)).equals("")
-		while(true) {	
-			if(getPrecedence(segmentedEq.get(index).charAt(0)) != -1) {
+		while(index < segmentedEq.size()) {	
+			isNegative = false;
+			
+			if(segmentedEq.get(index).equals("-")) {
+				if(!segmentedEq.get(index - 1).equals(")") && !segmentedEq.get(index - 1).equals("x") && isNum(segmentedEq.get(index - 1).charAt(0)) == -1) {
+					isNegative = true;
+				}
+			}
+			
+			if(getPrecedence(segmentedEq.get(index).charAt(0)) != -1 && isNegative == false) {
 				preOpIndex = currentOpIndex;
 				currentOpIndex = index;
 				preOpChar = currentOpChar;
 				currentOpChar = segmentedEq.get(index).charAt(0);
-				
-				if(preOpChar != ' ' && currentOpChar != ' ') {
+				if(preOpChar != ' ' && currentOpChar != ' ' && getPrecedence(preOpChar) < getPrecedence(currentOpChar)) {
+					foundHigher = true;
+				}
+				if(preOpChar != ' ' && currentOpChar != ' ' && foundHigher == true) {
 					if(preOpChar == '^' && currentOpChar != '^') {
 						for(int i = 0; i < powerCount; i++) {
 							segmentedEq.add(index, ")");
@@ -264,6 +275,7 @@ public class Equation {
 					else if(getPrecedence(preOpChar) < getPrecedence(currentOpChar)) {
 						segmentedEq.add(preOpIndex + 1, "(");
 						index++;
+						currentOpIndex++;
 						if(currentOpChar != '^') {
 							bal++;
 						}
@@ -274,40 +286,41 @@ public class Equation {
 						bal--;
 						
 					}
-					else if(currentOpChar == '^') {
+					if(currentOpChar == '^') {
 						powerCount++;
 						if(preOpChar == '^') {
 							segmentedEq.add(preOpIndex + 1, "(");
 							index++;
+							currentOpIndex++;
 						}
 					}
 					
 				}
+				System.out.println(preOpChar + " " + currentOpChar + " " + segmentedEq);
 			}
-			else if(isSymbol(segmentedEq.get(index).charAt(0)).equals('(')) {
+			else if(isSymbol(segmentedEq.get(index).charAt(0)).equals("(")) {
 				index++;
 				System.out.println("NESTED CALL");
 				correctOrderOfOperations();
 				
 			}
-			else if(isSymbol(segmentedEq.get(index).charAt(0)).equals(')')) {
-				for(int i = 0; i < bal + powerCount; i++) {
-					segmentedEq.add(index, ")");
-					index++;
-				}
+			else if(isSymbol(segmentedEq.get(index).charAt(0)).equals(")")) {
 				break;
 			}
 			
 			//(x + (3 * (4 ^ (x ^ (2 + 3)))))
 			//(x + 3 / 2 + (x + 1 / 5) * 1)
-			System.out.println(preOpChar + " " + currentOpChar + " " + segmentedEq);
+			
 			index++;
 		}
+		System.out.println("PowerCount=" + powerCount + " Bal=" + bal);
 		for(int i = 0; i < powerCount + bal; i++) {
 			segmentedEq.add(index, ")");
 			index++;
 		}
-		index++;
+		System.out.println(preOpChar + " " + currentOpChar + " " + segmentedEq);
+		//index++;
+		System.out.println("END");
 	}
 	
 	public int getPrecedence(char c) {
@@ -347,7 +360,14 @@ public class Equation {
 				return f(x) + x;
 			}
 			else if(segmentedEq.get(index).equals("-")) {
-				return f(x) - x;
+				if(!segmentedEq.get(index - 1).equals(")") && !segmentedEq.get(index - 1).equals("x") && isNum(segmentedEq.get(index - 1).charAt(0)) == -1) {
+					return f(0 - x);
+				}
+				else {
+					//System.out.println("MINUS");
+					return f(x) - x;
+				}
+
 			}
 			else if(segmentedEq.get(index).equals("*")) {
 				return f(x) * x;
