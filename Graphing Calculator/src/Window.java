@@ -5,8 +5,22 @@ import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
+import java.util.ArrayList;
+
+import javafx.scene.shape.*;
 
 public class Window extends JFrame implements ActionListener, MouseListener {
+	static int windowX;
+	static int windowY;
+	static int windowHeight;
+	static int windowWidth;
+	ArrayList<Equation> memLog = new ArrayList();
+	int memIndex = 0;
+	
+	int xGridSize = 2;
+	static double xNestedGridSize;
+	int yGridSize = 2;
+	static double yNestedGridSize = 1.0;
 	
 	public JPanel panel = new JPanel();
 	JPanel controls = new JPanel();
@@ -15,6 +29,10 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 	JButton graphButton = new JButton("Graph");
 	JButton test = new JButton("test");
 	JLabel instruction = new JLabel("<html>Click anywhere on <br/>the plane to graph!</html>", SwingConstants.CENTER);
+	
+	Ellipse2D dPadCircle;
+	boolean drawMoveControls = true;
+	int dPadSize = 55;
 	
 	JTextField xMinIn = new JTextField();
 	JTextField xMaxIn = new JTextField();
@@ -28,6 +46,12 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 	
 	JLabel yEquals = new JLabel("y =", SwingConstants.CENTER);
 	
+	JLabel zoomIn = new JLabel("+", SwingConstants.CENTER);
+	JLabel zoomOut = new JLabel("-", SwingConstants.CENTER);
+	
+	JLabel forwardMem = new JLabel(">", SwingConstants.CENTER); 
+	JLabel backwardMem = new JLabel("<", SwingConstants.CENTER);
+	
 	int rangeLabelSize = 60;
 	
 	JCheckBox crazyColorOption = new JCheckBox();
@@ -35,16 +59,18 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 	
 	String eq;
 	
-	int width = 600;
-	int height = 600;
+	static int width = 700;
+	static int height = 700;
 	int controlSize = 300;
 	int equationInHeight = 70;
+	int insetsTop;
+	static double xMin;
+	static double xMax;
+	static double yMin;
+	static double yMax;
 	
-	double xMin;
-	double xMax;
-	double yMin;
-	double yMax;
-
+	DrawPlane plane;
+	
 	int crazyColorMode = 0;
 	
 	Color jElementColor = Color.decode("#454545");
@@ -53,6 +79,12 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 	Color jHighlightColor = Color.decode("#DDDDDD");
 	Color controlsColor = Color.decode("#1C1C1C");
 	Color backgroundColor = Color.decode("#2A2A2A");
+	Color memColor = Color.decode("#6A6A6A");
+	Color memBackColor = Color.decode("#3C3C3C");
+	Color axisColor = Color.decode("#AAAAAA");
+	Color nestedGridColor = Color.decode("#393939");
+	Color gridColor = Color.decode("#515151");
+	Color lineColor = Color.decode("#FBFBFB");
 	
 	MyColor myBackColor;
 	MyColor myControlsColor;
@@ -61,27 +93,34 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 	MyColor myTextColor;
 	MyColor myElementColor;
 	MyColor myHighText;
+	MyColor myBlack;
+	MyColor myMemColor;
+	MyColor myMemBackColor;
 	
 	Font labelFont = new Font("Century Gothic", Font.PLAIN, 23);
 	Font maxMinFont = new Font("Apple Mono", Font.CENTER_BASELINE, 16);
 	Font typeFont = new Font("Apple Mono", Font.CENTER_BASELINE, 16);
 	Font equationFont = new Font("Apple Mono", Font.CENTER_BASELINE, 33);
+	Font zoomFont = new Font("Apple Mono", Font.CENTER_BASELINE, 28);
+	Font memFont = new Font("Apple Mono", Font.CENTER_BASELINE, 40);
 	
 	Border textBorder = BorderFactory.createLineBorder(jElementColor);
+	Border zoomBorder = BorderFactory.createLineBorder(jLabelColor, 2);
 	
 	boolean repOnce = true;
-	TopBarHeight topBarHeight;
+	boolean mousePressed = false;
+	
 	Equation equation = new Equation();
 	
 	Timer timer = new Timer(10, this);
 	
-	int colorSpeed = 5;
+	int colorSpeed = 7;
 	
 	public Window() {
 		
 		//super.getContentPane().setPreferredSize(new Dimension(width + controlSize, height + equationInHeight));
 		//super.pack();
-		
+		xNestedGridSize = 1.0;
 		
 		System.out.println("TBH = " + super.getInsets().top);
 		
@@ -92,14 +131,17 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 		myTextColor = new MyColor(jTextColor, colorSpeed);
 		myElementColor = new MyColor(jElementColor, colorSpeed);
 		myHighText = new MyColor(0, 0, 0, colorSpeed);
+		myBlack = new MyColor(Color.BLACK, colorSpeed);
+		myMemColor = new MyColor(memColor, colorSpeed);
+		myMemBackColor = new MyColor(memBackColor, colorSpeed);
 		
 		timer.setInitialDelay(1);
 		timer.start();
 		
-		xMin = -10.0;
-		xMax = 10.0;
-		yMin = -10.0;
-		yMax = 10.0;
+		xMin = -10.000;
+		xMax = 10.000;
+		yMin = -10.000;
+		yMax = 10.000;
 		
 		xMinIn = new JTextField(Double.toString(xMin));
 		xMaxIn = new JTextField(Double.toString(xMax));
@@ -108,34 +150,13 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 		
 		System.out.println(equation.getPoints());
 		
-		
-		
 		graphButton.setBounds(width + 45, 40, 70, 30);
+		instruction.setBounds(0, 0, controlSize, 85);
 		
 		graphButton.setBackground(jElementColor);;
 		graphButton.setForeground(jTextColor);
 		
-		instruction.setForeground(jLabelColor);
-		instruction.setBounds(0, 15, controlSize, 60);
-		
-		instruction.setFont(labelFont);
-		
-		equationIn.setBackground(jElementColor);
-		equationIn.setForeground(jTextColor);
-		equationIn.setCaretColor(jTextColor);
-		equationIn.setSelectionColor(jHighlightColor);
-		equationIn.setFont(equationFont);
-		equationIn.setBorder(textBorder);
-		equationIn.setSelectedTextColor(backgroundColor);
-		
-		yEquals.setBackground(jElementColor);
-		yEquals.setForeground(jTextColor);
-		yEquals.setFont(equationFont);
-		yEquals.setOpaque(true);
-		
-		graphButton.addActionListener(this);
-		
-		xMaxLab.setBounds((controlSize - (90 + (controlSize / 2))) / 2, 150, rangeLabelSize, 30);
+		xMaxLab.setBounds((controlSize - (90 + (controlSize / 2))) / 2, 100, rangeLabelSize, 30);
 		xMinLab.setBounds(xMaxLab.getX(), xMaxLab.getY() + 40, rangeLabelSize, 30);
 		yMaxLab.setBounds(xMaxLab.getX(), xMinLab.getY() + 40, rangeLabelSize, 30);
 		yMinLab.setBounds(xMaxLab.getX(), yMaxLab.getY() + 40, rangeLabelSize, 30);
@@ -147,56 +168,10 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 		
 		crazyLab.setBounds(yMinLab.getX() + 10, yMinLab.getY() + 45, 170, 30);
 		crazyColorOption.setBounds(crazyLab.getX() + 160, crazyLab.getY() + 2, 25, 25);
-		crazyColorOption.addActionListener(this);
-		crazyColorOption.setOpaque(false);
 		
-		xMinLab.setForeground(jLabelColor);
-		xMaxLab.setForeground(jLabelColor);
-		yMinLab.setForeground(jLabelColor);
-		yMaxLab.setForeground(jLabelColor);
 		
-		xMinLab.setFont(maxMinFont);
-		xMaxLab.setFont(maxMinFont);
-		yMinLab.setFont(maxMinFont);
-		yMaxLab.setFont(maxMinFont);
-		
-		crazyLab.setForeground(jLabelColor);
-		crazyLab.setFont(maxMinFont);
-		
-		xMinIn.setFont(typeFont);
-		xMaxIn.setFont(typeFont);
-		yMinIn.setFont(typeFont);
-		yMaxIn.setFont(typeFont);
-		
-		xMinIn.setBackground(jElementColor);
-		xMaxIn.setBackground(jElementColor);
-		yMinIn.setBackground(jElementColor);
-		yMaxIn.setBackground(jElementColor);
-		
-		xMinIn.setForeground(jTextColor);
-		xMaxIn.setForeground(jTextColor);
-		yMinIn.setForeground(jTextColor);
-		yMaxIn.setForeground(jTextColor);
-		
-		xMinIn.setCaretColor(jTextColor);
-		xMaxIn.setCaretColor(jTextColor);
-		yMinIn.setCaretColor(jTextColor);
-		yMaxIn.setCaretColor(jTextColor);
-		
-		xMinIn.setSelectionColor(jHighlightColor);
-		xMaxIn.setSelectionColor(jHighlightColor);
-		yMinIn.setSelectionColor(jHighlightColor);
-		yMaxIn.setSelectionColor(jHighlightColor);
-		
-		xMinIn.setSelectedTextColor(backgroundColor);
-		xMaxIn.setSelectedTextColor(backgroundColor);
-		yMinIn.setSelectedTextColor(backgroundColor);
-		yMaxIn.setSelectedTextColor(backgroundColor);
-		
-		xMinIn.setBorder(textBorder);
-		xMaxIn.setBorder(textBorder);
-		yMinIn.setBorder(textBorder);
-		yMaxIn.setBorder(textBorder);
+		zoomIn.setBounds((controlSize / 2) - 110, crazyLab.getY() + 45, 50, 50);
+		zoomOut.setBounds((controlSize / 2) + 60, crazyLab.getY() + 45, 50, 50);
 		
 		//controls.add(equationIn);
 		//panel.add(graphButton);
@@ -207,6 +182,9 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 		controls.add(yMinLab);
 		controls.add(yMaxLab);
 		
+		controls.add(zoomIn);
+		controls.add(zoomOut);
+		
 		controls.add(xMinIn);
 		controls.add(xMaxIn);
 		controls.add(yMinIn);
@@ -215,15 +193,18 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 		controls.add(crazyColorOption);
 		controls.add(crazyLab);
 		
-		panel.setBackground(backgroundColor);
-		
-		
-		controls.setBackground(controlsColor);
 		controls.setLayout(null);
 		panel.add(controls);
 		panel.add(equationIn);
 		panel.add(yEquals);
 		
+		crazyColorOption.addActionListener(this);
+		
+		zoomIn.addMouseListener(this);
+		zoomOut.addMouseListener(this);
+		
+		forwardMem.addMouseListener(this);
+		backwardMem.addMouseListener(this);
 		
 		super.setName("Graphing Calculator");
 		super.setSize(width + controlSize, height + equationInHeight + super.getInsets().top);
@@ -234,83 +215,59 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 		super.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		super.setVisible(true);
 		
+		insetsTop = super.getInsets().top;
+		windowX = super.getX();
+		windowY = super.getY();
+		windowHeight = super.getHeight();
+		windowWidth = super.getWidth();
+		
 		//System.out.println("TBH1 = " + super.getInsets().top);
 		super.setSize(width + controlSize, height + equationInHeight + super.getInsets().top);
-		topBarHeight.init(super.getInsets().top);
 		
 		controls.setBounds(width + 1, 0, controlSize, height);
 		yEquals.setBounds(0, height, 70, equationInHeight);
-		equationIn.setBounds(yEquals.getWidth(), height, width + controlSize - yEquals.getWidth(), equationInHeight);
+		equationIn.setBounds(yEquals.getWidth(), height, width + controlSize - yEquals.getWidth() - (2 * (equationInHeight - 15)), equationInHeight);
+		forwardMem.setBounds(width + controlSize - equationInHeight + 15, equationIn.getY(), equationInHeight - 15, equationInHeight);
+		backwardMem.setBounds(forwardMem.getX() - forwardMem.getWidth(), forwardMem.getY(), forwardMem.getWidth(), forwardMem.getHeight());
+		
+		panel.add(forwardMem);
+		panel.add(backwardMem);
+
+		dPadCircle = new Ellipse2D.Float(width + dPadSize, yMinIn.getY() + 190, controlSize - (2 * dPadSize), controlSize - (2 * dPadSize));
 		
 		equationIn.grabFocus();
+		makeNewEquation();
+		
 	}
-	
 	public void paint(Graphics g) {
 		super.paint(g);
 		Graphics2D g2 = (Graphics2D) g;
+		
 		g2.setStroke(new BasicStroke(2));
-		
-		Line2D yAxis = new Line2D.Double(((double)width / 2.0) - (  ((xMax + xMin) / 2.0) * (((double)width / 2.0) / ((xMax - xMin) / 2.0))  ), 
-										topBarHeight.height + 0, 
-										((double)width / 2.0) - (  ((xMax + xMin) / 2.0) * (((double)width / 2.0) / ((xMax - xMin) / 2.0))  ), 
-										topBarHeight.height + height);
-		Line2D xAxis = new Line2D.Double(0, 
-										topBarHeight.height + ((double)height / 2.0) + (  ((yMax + yMin) / 2.0) * (((double)height / 2.0) / ((yMax - yMin) / 2.0))  ), 
-										width, 
-										topBarHeight.height + ((double)height / 2.0) + (  ((yMax + yMin) / 2.0) * (((double)height / 2.0) / ((yMax - yMin) / 2.0))  ));
-		
-		Color axisColor = Color.decode("#666666");
-		g2.setColor(axisColor);
-		
-		g2.draw(yAxis);
-		g2.draw(xAxis);
-		
-		double y1 = 0;
-		double y2 = 0;
-		double x1 = 0;
-		double x2 = 0;
-		
-		double translateX = ((double)width / 2) - (  ((xMax + xMin) / 2.0) * (((double)width / 2.0) / ((xMax - xMin) / 2.0))  );
-		double translateY = ((double)height / 2.0) + (  ((yMax + yMin) / 2.0) * (((double)height / 2.0) / ((yMax - yMin) / 2.0))  );
-		
-		Line2D temp;
-		Color lineColor = Color.decode("#AAAAAA");
-		g2.setColor(lineColor);
+		g2.setColor(backgroundColor);
 		
 		
-		for(int i = 0; i < equation.getPoints().size() - 1; i++) {
-			
-			y1 = equation.getPoints().get(i).getY();
-			y2 = equation.getPoints().get(i + 1).getY();
-			x1 = equation.getPoints().get(i).getX();
-			x2 = equation.getPoints().get(i + 1).getX();
-			
-			//y1 + translateY  - (y2 * 2) <= height && y1 + translateY - (y2 * 2)  >= 0
-			
-			if(y1 + translateY  - (y2 * 2) <= height && y1 + translateY - (y2 * 2)  >= 0) {
-				if(i == 0) {
-					double test = equation.getPoints().get(0).getX() + translateX;
-					double test2 = xMax + xMin;
-					System.out.println("\nX1 = " + test + "\nMaxMin = " + xMax + "/" + xMin + "\n");
-				}
-				
-				/*
-				temp = new Line2D.Double(x1 + (double)width / 2.0, 
-										 y1 + (2.0 * (((double)height / 2.0) - y1)), 
-									     x2 + (double)width / 2.0, 
-									     y2 + (2.0 * (((double)height / 2.0) - y2)));
-				*/
-				temp = new Line2D.Double(x2 + translateX, 
-										 y2 + translateY - (y2 * 2) + topBarHeight.height, 
-									     x1 + translateX, 
-									     y1 + translateY - (y1 * 2) + topBarHeight.height);	
-				g2.draw(temp);
-			}
-			
-		}
+		g2.fill(dPadCircle);
+		
+		Line2D dPadLineVer = new Line2D.Float((int)(dPadCircle.getX() + (dPadCircle.getWidth() / 2)), 
+											(int)dPadCircle.getY(), 
+											(int)(dPadCircle.getX() + (dPadCircle.getWidth() / 2)), 
+											(int)(dPadCircle.getY() + dPadCircle.getWidth()));
+		Line2D dPadLineHor = new Line2D.Float((int)dPadCircle.getX(), 
+				(int)(dPadCircle.getY() + (dPadCircle.getHeight() / 2)), 
+				(int)(dPadCircle.getX() + dPadCircle.getWidth()), 
+				(int)(dPadCircle.getY() + (dPadCircle.getHeight() / 2)));
+		Ellipse2D dPadCircle2 = new Ellipse2D.Float((int)dPadCircle.getX(), (int)dPadCircle.getY(), (int)dPadCircle.getWidth(), (int)dPadCircle.getHeight());
+		g2.setColor(gridColor);
+		g2.draw(dPadCircle);
+		g2.draw(dPadLineHor);
+		g2.draw(dPadLineVer);
+		System.out.println("INSETSTOP = " + insetsTop);
+		plane = new DrawPlane(equation, g2, insetsTop, xNestedGridSize, yNestedGridSize);
+		//plane.drawGrid();
+		yEquals.repaint();
 		equationIn.repaint();
 	}
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		
@@ -327,6 +284,11 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 			myHighColor.increment();
 			myTextColor.increment();
 			myHighText.increment();
+			myBlack.increment();
+			myMemColor.increment();
+			myMemBackColor.increment();
+			
+			textBorder = BorderFactory.createLineBorder(myElementColor.getColor());
 			
 			controls.setBackground(myControlsColor.getColor());
 			panel.setBackground(myBackColor.getColor());
@@ -336,6 +298,7 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 			equationIn.setSelectionColor(myHighColor.getColor());
 			equationIn.setCaretColor(myTextColor.getColor());
 			equationIn.setSelectedTextColor(myHighText.getColor());
+			equationIn.setBorder(textBorder);
 			
 			yEquals.setBackground(myElementColor.getColor());
 			yEquals.setForeground(myTextColor.getColor());
@@ -372,9 +335,37 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 			yMinIn.setForeground(myTextColor.getColor());
 			yMaxIn.setForeground(myTextColor.getColor());
 			
+			xMinIn.setBorder(textBorder);
+			xMaxIn.setBorder(textBorder);
+			yMinIn.setBorder(textBorder);
+			yMaxIn.setBorder(textBorder);
+			
 			instruction.setForeground(myLabelColor.getColor());
+			instruction.setBackground(myBlack.getColor());
+			
+			forwardMem.setForeground(myMemColor.getColor());
+			forwardMem.setBackground(myMemBackColor.getColor());
+			
+			backwardMem.setForeground(myMemColor.getColor());
+			backwardMem.setBackground(myMemBackColor.getColor());
+			
+			zoomIn.setForeground(myLabelColor.getColor());
+			zoomOut.setForeground(myLabelColor.getColor());
+			
+			zoomBorder = BorderFactory.createLineBorder(myLabelColor.getColor(), 2);
+			zoomIn.setBorder(zoomBorder);
+			zoomOut.setBorder(zoomBorder);
 		}
 		else if(crazyColorMode == 0) {
+			textBorder = BorderFactory.createLineBorder(jElementColor);
+			zoomBorder = BorderFactory.createLineBorder(jLabelColor, 2);
+			
+			instruction.setForeground(jLabelColor);
+			instruction.setBackground(Color.BLACK);
+			instruction.setOpaque(true);
+			
+			instruction.setFont(labelFont);
+			
 			equationIn.setBackground(jElementColor);
 			equationIn.setForeground(jTextColor);
 			equationIn.setCaretColor(jTextColor);
@@ -385,11 +376,49 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 			
 			yEquals.setBackground(jElementColor);
 			yEquals.setForeground(jTextColor);
+			yEquals.setFont(equationFont);
+			yEquals.setOpaque(true);
 			
-			xMinIn.setSelectedTextColor(backgroundColor);
-			xMaxIn.setSelectedTextColor(backgroundColor);
-			yMinIn.setSelectedTextColor(backgroundColor);
-			yMaxIn.setSelectedTextColor(backgroundColor);
+			forwardMem.setForeground(memColor);
+			forwardMem.setFont(memFont);
+			forwardMem.setBackground(memBackColor);
+			forwardMem.setOpaque(true);
+			
+			backwardMem.setForeground(memColor);
+			backwardMem.setFont(memFont);
+			backwardMem.setBackground(memBackColor);
+			backwardMem.setOpaque(true);
+			
+			xMinLab.setForeground(jLabelColor);
+			xMaxLab.setForeground(jLabelColor);
+			yMinLab.setForeground(jLabelColor);
+			yMaxLab.setForeground(jLabelColor);
+			
+			xMinLab.setFont(maxMinFont);
+			xMaxLab.setFont(maxMinFont);
+			yMinLab.setFont(maxMinFont);
+			yMaxLab.setFont(maxMinFont);
+			
+			zoomIn.setForeground(jLabelColor);
+			zoomOut.setForeground(jLabelColor);
+			
+			zoomIn.setBackground(Color.decode("#3C3C3C"));
+			zoomOut.setBackground(Color.decode("#3C3C3C"));
+			
+			zoomIn.setFont(zoomFont);
+			zoomOut.setFont(zoomFont);
+			
+			zoomIn.setBorder(zoomBorder);
+			zoomOut.setBorder(zoomBorder);
+			
+			crazyLab.setForeground(jLabelColor);
+			crazyLab.setFont(maxMinFont);
+			crazyColorOption.setOpaque(false);
+			
+			xMinIn.setFont(typeFont);
+			xMaxIn.setFont(typeFont);
+			yMinIn.setFont(typeFont);
+			yMaxIn.setFont(typeFont);
 			
 			xMinIn.setBackground(jElementColor);
 			xMaxIn.setBackground(jElementColor);
@@ -411,28 +440,142 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 			yMinIn.setSelectionColor(jHighlightColor);
 			yMaxIn.setSelectionColor(jHighlightColor);
 			
+			xMinIn.setSelectedTextColor(backgroundColor);
+			xMaxIn.setSelectedTextColor(backgroundColor);
+			yMinIn.setSelectedTextColor(backgroundColor);
+			yMaxIn.setSelectedTextColor(backgroundColor);
+			
 			xMinIn.setBorder(textBorder);
 			xMaxIn.setBorder(textBorder);
 			yMinIn.setBorder(textBorder);
+			yMaxIn.setBorder(textBorder);
 			
-			xMinLab.setForeground(jLabelColor);
-			xMaxLab.setForeground(jLabelColor);
-			yMinLab.setForeground(jLabelColor);
-			yMaxLab.setForeground(jLabelColor);
-			
-			crazyLab.setForeground(jLabelColor);
-			
-			instruction.setForeground(jLabelColor);
-			
-			controls.setBackground(controlsColor);
 			panel.setBackground(backgroundColor);
+			controls.setBackground(controlsColor);
 			
 			crazyColorMode = 2;
+			super.repaint();
 		}
 		repOnce = false;
 		
 	}
-
+	//0.10001 - 1 = 10^-1
+	//1.00001 - 10 = 10^0
+	//10.00001 - 100 = 10^1
+	
+	public void makeNewEquation() {
+		
+		
+		eq = equationIn.getText();
+		System.out.println("Text = " + eq);
+		
+		if(!xMaxIn.getText().equals("")) {
+			xMax = Double.parseDouble(xMaxIn.getText());
+			System.out.println("xMax = " + xMax);
+		}
+		if(!xMinIn.getText().equals("")) {
+			xMin = Double.parseDouble(xMinIn.getText());
+			System.out.println("xMin = " + xMin);
+		}
+		if(!yMaxIn.getText().equals("")) {
+			yMax = Double.parseDouble(yMaxIn.getText());
+			System.out.println("yMax = " + yMax);
+		}
+		if(!yMinIn.getText().equals("")) {
+			yMin = Double.parseDouble(yMinIn.getText());
+			System.out.println("yMin = " + yMin);
+		}
+		if(xMax <= xMin) {
+			System.out.println("xRange Error");
+			new ErrorWindow("Range Error", "'X Max' must be greater than 'X Min'");
+		}
+		else if(yMax <= yMin) {
+			new ErrorWindow("Range Error", "'Y Max' must be greater than 'Y Min'");
+		}
+		else {
+			setGridSize();
+			
+			if(eq.equals("")) {
+				equation = new Equation();
+			}
+			else {
+				equation = new Equation(eq, width, height, xMin, xMax, yMin, yMax);
+				System.out.println("EQUATION SIZE = " + equation.segmentedEq.size());
+				if(memLog.size() > 0) {
+					if(!equation.doesEqual(memLog.get(memLog.size() - 1))) {
+						memLog.add(equation);
+						memIndex = memLog.size() - 1;
+					}
+				}
+				else if(equation.segmentedEq.size() > 2) {
+					memLog.add(equation);
+					memIndex = memLog.size() - 1;
+				}
+				System.out.println("MEMLOG = " + memLog);
+			}
+			roundRanges();
+			super.repaint();
+		}
+	
+	}
+	public void setGridSize() {
+		System.out.println("GRIDSIZE TEST = " + ((xMax - xMin) / 2));
+		if(((xMax - xMin) / 2) > 10) {
+			double i = 10.0;
+			double count = 0.0;
+			while(i < ((xMax - xMin) / 2) - ((xMax - xMin) / 1000)) {
+				i = Math.pow(10, count) * 100;
+				count += 1;
+			}
+			xNestedGridSize = Math.pow(10.0, count); 
+		}
+		else {
+			double count = 0.0;
+			double i = 1.0;
+			while(i > ((xMax - xMin) / 2) + ((xMax - xMin) / 1000)) {
+				i = Math.pow(10, count) / 10;
+				count -= 1;
+			}
+			xNestedGridSize = Math.pow(10.0, count); 
+		}
+		if(((yMax - yMin) / 2) > 10) {
+			double i = 10.0;
+			double count = 0.0;
+			while(i < ((yMax - yMin) / 2) - ((yMax - yMin) / 1000)) {
+				i = Math.pow(10, count) * 100;
+				count += 1;
+			}
+			yNestedGridSize = Math.pow(10.0, count); 
+		}
+		else {
+			double count = 0.0;
+			double i = 1.0;
+			while(i > ((yMax - yMin) / 2) + ((yMax - yMin) / 1000)) {
+				i = Math.pow(10, count) / 10;
+				count -= 1;
+			}
+			yNestedGridSize = Math.pow(10.0, count); 
+		}
+		
+	}
+	public void roundRanges() {
+		if(Math.abs(Double.parseDouble(xMaxIn.getText())) >= 0.001 && Math.abs((Double.parseDouble(xMaxIn.getText()) - Double.parseDouble(xMinIn.getText())) / 2) >= 0.001) {
+			xMaxIn.setText(String.format("%.3f", Double.parseDouble(xMaxIn.getText())));
+			xMinIn.setText(String.format("%.3f", Double.parseDouble(xMinIn.getText())));
+		}
+		if(Math.abs(Double.parseDouble(xMinIn.getText())) >= 0.001 && Math.abs((Double.parseDouble(xMaxIn.getText()) - Double.parseDouble(xMinIn.getText())) / 2) >= 0.001) {
+			xMinIn.setText(String.format("%.3f", Double.parseDouble(xMinIn.getText())));
+		}
+		if(Math.abs(Double.parseDouble(yMaxIn.getText())) >= 0.001 && Math.abs((Double.parseDouble(yMaxIn.getText()) - Double.parseDouble(yMinIn.getText())) / 2) >= 0.001) {
+			yMaxIn.setText(String.format("%.3f", Double.parseDouble(yMaxIn.getText())));
+			yMinIn.setText(String.format("%.3f", Double.parseDouble(yMinIn.getText())));
+		}
+		if(Math.abs(Double.parseDouble(yMinIn.getText())) >= 0.001 && Math.abs((Double.parseDouble(yMaxIn.getText()) - Double.parseDouble(yMinIn.getText())) / 2) >= 0.001) {
+			yMinIn.setText(String.format("%.3f", Double.parseDouble(yMinIn.getText())));
+		}
+		
+		
+	}
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		
@@ -440,51 +583,141 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		if(e.getX() <= width) {
-			eq = equationIn.getText();
-			System.out.println("Text = " + eq);
-			if(!xMaxIn.getText().equals("")) {
-				xMax = Double.parseDouble(xMaxIn.getText());
-				System.out.println("xMax");
+		if(crazyColorMode != 1) {
+			if(!e.getComponent().equals(zoomIn) && !e.getComponent().equals(zoomOut) && !e.getComponent().equals(forwardMem) && !e.getComponent().equals(backwardMem) && e.getX() <= width && e.getY() <= height) {
+				makeNewEquation();
 			}
-			if(!xMinIn.getText().equals("")) {
-				xMin = Double.parseDouble(xMinIn.getText());
-				System.out.println("xMin");
+			else if(!e.getComponent().equals(zoomIn) && !e.getComponent().equals(zoomOut) && !e.getComponent().equals(forwardMem) && !e.getComponent().equals(backwardMem) && dPadCircle.contains(e.getX(), e.getY())) {
+				
+				Point dPadCenter = new Point(dPadCircle.getX() + (dPadCircle.getWidth() / 2), dPadCircle.getY() + (dPadCircle.getHeight() / 2));
+				double shiftNum = 0.0;
+				//shift range by ((xMax - xMin) / 2) * ((e.getX() - dPadCenter.getX()) / (dPadCircle.getWidth() / 2))
+				
+				shiftNum = ((xMax - xMin) / 2.0) * (Math.pow(((e.getX() - dPadCenter.getX()) / (dPadCircle.getWidth())), 2.0) / 3.0 * 5.0);
+				if(e.getX() < dPadCenter.getX()) {
+					shiftNum *= -1.0;
+				}
+				xMaxIn.setText(Double.toString(xMax + shiftNum));
+				xMinIn.setText(Double.toString(xMin + shiftNum));
+				
+				shiftNum = ((yMax - yMin) / 2.0) *  (Math.pow((double)((e.getY() - dPadCenter.getY()) / (double)(dPadCircle.getHeight())), 2.0) / 3.0 * 5.0);
+				if(e.getY() > dPadCenter.getY()) {
+					shiftNum *= -1.0;
+				}
+				yMaxIn.setText(Double.toString(yMax + shiftNum));
+				yMinIn.setText(Double.toString(yMin + shiftNum));
+				makeNewEquation();
+				mousePressed = true;
+				
+				}
+			else if(e.getComponent().equals(forwardMem)) {
+				forwardMem.setBackground(Color.decode("#555555"));
+				forwardMem.repaint();
+				if(memIndex < memLog.size() - 1) {
+					memIndex++;
+					equationIn.setText(memLog.get(memIndex).equationString);
+				}
+				
 			}
-			if(!yMaxIn.getText().equals("")) {
-				yMax = Double.parseDouble(yMaxIn.getText());
-				System.out.println("yMax");
+			else if(e.getComponent().equals(backwardMem)) {
+				backwardMem.setBackground(Color.decode("#555555"));
+				backwardMem.repaint();
+				if(memIndex > 0) {
+					memIndex--;
+					equationIn.setText(memLog.get(memIndex).equationString);
+				}
+				
 			}
-			if(!yMinIn.getText().equals("")) {
-				yMin = Double.parseDouble(yMinIn.getText());
-				System.out.println("yMin");
+			else if(e.getComponent().equals(zoomIn)) {
+				zoomIn.setOpaque(true);
+				zoomIn.repaint();
+				
+				xMaxIn.setText(Double.toString(xMax - ((xMax - xMin) / 15.0)));
+				xMinIn.setText(Double.toString(xMin + ((xMax - xMin) / 15.0)));
+				yMaxIn.setText(Double.toString(yMax - ((yMax - yMin) / 15.0)));
+				yMinIn.setText(Double.toString(yMin + ((yMax - yMin) / 15.0)));
+				
+				makeNewEquation();
 			}
-			if(eq.equals("")) {
-				equation = new Equation();
+			else if(e.getComponent().equals(zoomOut)) {
+				zoomOut.setOpaque(true);
+				zoomOut.repaint();
+				
+				xMaxIn.setText(Double.toString(xMax + ((xMax - xMin) / 15.0)));
+				xMinIn.setText(Double.toString(xMin - ((xMax - xMin) / 15.0)));
+				yMaxIn.setText(Double.toString(yMax + ((yMax - yMin) / 15.0)));
+				yMinIn.setText(Double.toString(yMin - ((yMax - yMin) / 15.0)));
+				
+				makeNewEquation();
 			}
-			else {
-				equation = new Equation(eq, width, height, xMin, xMax, yMin, yMax);
-			}
-			super.repaint();
 		}
-		
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		mousePressed = false;
+		if(crazyColorMode != 1) {
+			if(e.getComponent().equals(zoomIn)) {
+				zoomIn.setOpaque(false);
+				zoomIn.repaint();
+			}
+			else if(e.getComponent().equals(zoomOut)) {
+				zoomOut.setOpaque(false);
+				zoomOut.repaint();
+			}
+			else if(e.getComponent().equals(forwardMem)) {
+				forwardMem.setBackground(memBackColor);
+				forwardMem.repaint();
+			}
+			else if(e.getComponent().equals(backwardMem)) {
+				backwardMem.setBackground(memBackColor);
+				backwardMem.repaint();
+			}
+		}
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		if(crazyColorMode != 1) {
+			if(e.getComponent().equals(zoomIn)) {
+				zoomBorder = BorderFactory.createLineBorder(Color.decode("#BBBBBB"), 2);
+				zoomIn.setBorder(zoomBorder);
+			}
+			if(e.getComponent().equals(zoomOut)) {
+				zoomBorder = BorderFactory.createLineBorder(Color.decode("#BBBBBB"), 2);
+				zoomOut.setBorder(zoomBorder);
+			}
+			else if(e.getComponent().equals(forwardMem)) {
+				forwardMem.setForeground(Color.decode("#DDDDDD"));
+				forwardMem.repaint();
+			}
+			else if(e.getComponent().equals(backwardMem)) {
+				backwardMem.setForeground(Color.decode("#DDDDDD"));
+				backwardMem.repaint();
+			}
+		}
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		
+		if(crazyColorMode != 1) {
+			if(e.getComponent().equals(zoomIn)) {
+				zoomBorder = BorderFactory.createLineBorder(jLabelColor, 2);
+				zoomIn.setBorder(zoomBorder);
+			}
+			if(e.getComponent().equals(zoomOut)) {
+				zoomBorder = BorderFactory.createLineBorder(jLabelColor, 2);
+				zoomOut.setBorder(zoomBorder);
+			}
+			else if(e.getComponent().equals(forwardMem)) {
+				forwardMem.setForeground(memColor);
+				forwardMem.repaint();
+			}
+			else if(e.getComponent().equals(backwardMem)) {
+				backwardMem.setForeground(memColor);
+				backwardMem.repaint();
+			}
+		}
 	}
 
 	
