@@ -1,3 +1,3 @@
 # Graphing-Calculator
-This is a graphing calculator application I made as a project in grade 12. It can be used to visualize functions of many different types and complexities.
-![alt text](https://github.com/VictorSuciu/)
+This is a graphing calculator application I made as a project in grade 12. It can be used to visualize functions of many different types and complexities.</br>
+![alt text](https://github.com/VictorSuciu/Graphing-Calculator/GC_Example.png)
