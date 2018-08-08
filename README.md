@@ -5,8 +5,4 @@ This is a graphing calculator application I made as a project in grade 12. It ca
 
 </br>
 
-</br>
-
-</br>
-
 ![alt text](https://github.com/VictorSuciu/Graphing-Calculator/blob/master/Images/GC_Example.png)
