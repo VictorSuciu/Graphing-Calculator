@@ -12,11 +12,7 @@ This is a graphing calculator application I made as a project in grade 12. It ca
 ##Supported Eelements
 | Category | Elements |
 | :---: | --- |
-| Operators | -+
--\-
--*
--/
--^ |
+| Operators | <ul><li>+</li><li>-</li><li>*</li><li>/</li><li>^</li></ul> |
 | Trig Functions | = |
 | Other Functions | = |
 | Constants | = |
