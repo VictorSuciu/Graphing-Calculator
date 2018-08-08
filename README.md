@@ -6,3 +6,17 @@ This is a graphing calculator application I made as a project in grade 12. It ca
 </br>
 
 ![alt text](https://github.com/VictorSuciu/Graphing-Calculator/blob/master/Images/GC_Example.png)
+
+</br>
+
+##Supported Eelements
+| Category | Elements |
+| :---: | --- |
+| Operators | -+
+-\-
+-*
+-/
+-^|
+| Trig Functions | = |
+| Other Functions | = |
+| Constants | = |
