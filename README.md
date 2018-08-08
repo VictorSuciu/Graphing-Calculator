@@ -10,6 +10,7 @@ This is a graphing calculator application I made as a project in grade 12. It ca
 </br>
 
 ##Supported Eelements
+
 | Category | Elements |
 | :---: | --- |
 | Operators | <ul><li>+</li><li>-</li><li>*</li><li>/</li><li>^</li></ul> |
