@@ -13,7 +13,7 @@ This is a graphing calculator application I made as a project in grade 12. It ca
 
 | Category | Elements |
 | :---: | --- |
-| Operators | <ul><li>+</li><li>-</li><li>*</li><li>/</li><li>^</li></ul> |
+| Operators | <ul><li>Addition +</li><li>Subtraction -</li><li>Multiplication *</li><li>Division /</li><li>Exponent ^</li></ul> |
 | Trig Functions | = |
 | Other Functions | = |
 | Constants | = |
