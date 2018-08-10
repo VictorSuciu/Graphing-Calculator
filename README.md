@@ -9,7 +9,7 @@ This is a graphing calculator application I made as a project in grade 12. It ca
 
 </br>
 
-## Supported Eelements
+## Supported Elements
 
 | Category | Elements |
 | :---: | --- |
@@ -22,18 +22,18 @@ This is a graphing calculator application I made as a project in grade 12. It ca
 
 ## Key Features
 
-### Order of Operations
+#### Order of Operations
 
 All PEMDAS rules, including parentheses, are taken into account. There is no limit to how many nested parentheses and functions can exist in a user's equation. 
 
-### Navigation Controls
+#### Navigation Controls
 
 The graph plane can be moved in any direction using the circular navigation pad, and can be zoomed in and out using the +/- buttons. 
 
-### Memory
+#### Memory
 
 Previously entered functions can be recalled using the back/forward arrow buttons to the right of the equation input box.
 
-### Implicit Multiplication
+#### Implicit Multiplication
 
-Multiplication can be entered as a "\*" multiplication symbol ```2 * x```, or without any symbol ```2x```.
+Multiplication can be entered as a "\*" multiplication symbol `2 * x`, or without any symbol `2x`.
