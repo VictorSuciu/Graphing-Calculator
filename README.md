@@ -13,7 +13,7 @@ This is a graphing calculator application I made as a project in grade 12. It ca
 
 | Category | Elements |
 | :---: | --- |
-| Operators | <ul><li>Addition **+**</li><li>Subtraction **-**</li><li>Multiplication **\***</li><li>Division **/**</li><li>Exponent **^**</li></ul> |
+| Operators | <ul><li>Addition **+**</li><li>Subtraction **-** (also used as a negative symbol)</li><li>Multiplication **\***</li><li>Division **/**</li><li>Exponent **^**</li></ul> |
 | Trig Functions | <ul><li>**sin()**</li><li>**cos()**</li><li>**tan()**</li><li>**arcsin()**</li><li>**arccos()**</li><li>**arctan()**</li></ul> |
 | Other Functions | <ul><li>**log()** (base 10 only)</li><li>**abs()** (absolute value)</li><li>**sqrt()** (squre root)</li></ul> |
 | Constants | <ul><li>**pi**</li><li>**e**</li></ul> |
@@ -47,6 +47,8 @@ Two extra close parentheses
 "3(x + 5)(log(x^3) -4)))"
 ```
 
+</br>
+
 2. Unrecognized element. When a user enters a letter, symbol, or any equation element that the calculator doesn't know.
 ```
 Unrecongized element starting with "L"
@@ -54,6 +56,17 @@ Unrecongized element starting with "L"
 
 Unrecongized element starting with "c"
 "log(5x) * csc(x)"
+```
+
+</br>
+
+3. Invalid use of an operator. When the user tries to use an operator incorectly or in the wrong context.
+```
+Incorrect use of + operator
+"(5x + )"
+
+Incorrect use of / operator
+"3 // x"
 ```
 
 ### Implicit Multiplication
