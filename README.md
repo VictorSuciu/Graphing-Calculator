@@ -9,7 +9,7 @@ This is a graphing calculator application I made as a project in grade 12. It ca
 
 </br>
 
-##Supported Eelements
+## Supported Eelements
 
 | Category | Elements |
 | :---: | --- |
@@ -17,3 +17,13 @@ This is a graphing calculator application I made as a project in grade 12. It ca
 | Trig Functions | <ul><li>**sin()**</li><li>**cos()**</li><li>**tan()**</li><li>**arcsin()**</li><li>**arccos()**</li><li>**arctan()**</li></ul> |
 | Other Functions | <ul><li>**log()** (base 10 only)</li><li>**abs()** (absolute value)</li><li>**sqrt()** (squre root)</li></ul> |
 | Constants | <ul><li>**pi**</li><li>**e**</li></ul> |
+
+## Key Features
+
+#### Order of Operations
+
+All PEMDAS rules, including parentheses, are taken into account. There is no limit to how many nested parentheses and functions can exist in a user's equation. 
+
+#### Navigation Controls
+
+The graph plane can be moved in any direction using the circular navigation pad, and can be zoomed in and out using the +/- buttons.                                                                                            
