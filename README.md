@@ -18,12 +18,22 @@ This is a graphing calculator application I made as a project in grade 12. It ca
 | Other Functions | <ul><li>**log()** (base 10 only)</li><li>**abs()** (absolute value)</li><li>**sqrt()** (squre root)</li></ul> |
 | Constants | <ul><li>**pi**</li><li>**e**</li></ul> |
 
+</br>
+
 ## Key Features
 
-#### Order of Operations
+### Order of Operations
 
 All PEMDAS rules, including parentheses, are taken into account. There is no limit to how many nested parentheses and functions can exist in a user's equation. 
 
-#### Navigation Controls
+### Navigation Controls
 
-The graph plane can be moved in any direction using the circular navigation pad, and can be zoomed in and out using the +/- buttons.                                                                                            
+The graph plane can be moved in any direction using the circular navigation pad, and can be zoomed in and out using the +/- buttons. 
+
+### Memory
+
+Previously entered functions can be recalled using the back/forward arrow buttons to the right of the equation input box.
+
+### Implicit Multiplication
+
+Multiplication can be entered as a "\*" multiplication symbol ```2 * x```, or without any symbol ```2x```.
