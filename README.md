@@ -39,14 +39,23 @@ Previously entered functions can be recalled using the back/forward arrow button
 This graphing calculator will notify the user of errors in the function they are trying to graph. There are three categories of errors.
 
 1. Unbalanced parentheses. When there are not the same number of open and closed parentheses.
-  - Exmples:
 ```
-unclosed parenthesis
-sin(2 - x
+Unclosed parentheses
+"sin(2 - x"
 
-2 extra close parentheses
-3(x + 5)(log(x^3) -4)))
+Two extra close parentheses
+"3(x + 5)(log(x^3) -4)))"
 ```
+
+2. Unrecognized element. When a user enters a letter, symbol, or any equation element that the calculator doesn't know.
+```
+Unrecongized element starting with "L"
+"LOL i dont wanna graff"
+
+Unrecongized element starting with "c"
+"log(5x) * csc(x)"
+```
+
 ### Implicit Multiplication
 
 Multiplication can be entered as a "\*" multiplication symbol `2 * x`, or without any symbol `2x`.
