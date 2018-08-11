@@ -26,13 +26,19 @@ This is a graphing calculator application I made as a project in grade 12. It ca
 
 All PEMDAS rules, including parentheses, are taken into account. There is no limit to how many nested parentheses and functions can exist in a user's equation. 
 
+</br>
+
 ### Navigation Controls
 
 The graph plane can be moved in any direction using the circular navigation pad, and can be zoomed in and out using the +/- buttons. The dimentions of the plane can also be set manually using the max/min input boxes at the top right.
 
+</br>
+
 ### Memory
 
 Previously entered functions can be recalled using the back/forward arrow buttons to the right of the equation input box.
+
+</br>
 
 ### Error Reporting
 
@@ -81,6 +87,8 @@ Graph plane cannot have negative/reversed height
 Y min = 5
 Y Max = -1
 ```
+
+</br>
 
 ### Implicit Multiplication
 
