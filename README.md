@@ -71,7 +71,7 @@ Incorrect use of / operator
 
 </br>
 
-3. **Invalid x/y parameters set.** When the user sets the X/Y Minimum value to be equal to or greater than the X/Y Maximum value.
+4. **Invalid x/y parameters set.** When the user sets the X/Y Minimum value to be equal to or greater than the X/Y Maximum value.
 ```
 Graph plane cannot have width of 0
 X Min = 2
