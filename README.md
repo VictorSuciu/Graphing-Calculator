@@ -38,7 +38,7 @@ Previously entered functions can be recalled using the back/forward arrow button
 
 This graphing calculator will notify the user of errors in the function they are trying to graph. There are three categories of errors.
 
-1. Unbalanced parentheses. When there are not the same number of open and closed parentheses.
+1. **Unbalanced parentheses.** When there are not the same number of open and closed parentheses.
 ```
 Unclosed parentheses
 "sin(2 - x"
@@ -49,7 +49,7 @@ Two extra close parentheses
 
 </br>
 
-2. Unrecognized element. When a user enters a letter, symbol, or any equation element that the calculator doesn't know.
+2. **Unrecognized element.** When a user enters a letter, symbol, or any equation element that the calculator doesn't know.
 ```
 Unrecongized element starting with "L"
 "LOL i dont wanna graff"
@@ -60,13 +60,26 @@ Unrecongized element starting with "c"
 
 </br>
 
-3. Invalid use of an operator. When the user tries to use an operator incorectly or in the wrong context.
+3. **Invalid use of an operator.** When the user tries to use an operator incorectly or in the wrong context.
 ```
 Incorrect use of + operator
 "(5x + )"
 
 Incorrect use of / operator
 "3 // x"
+```
+
+</br>
+
+3. **Invalid x/y parameters set.** When the user sets the X/Y Minimum value to be equal to or greater than the X/Y Maximum value.
+```
+Graph plane cannot have width of 0
+X Min = 2
+X Max = 2
+
+Graph plane cannot have negative/reversed height
+Y min = 5
+Y Max = -1
 ```
 
 ### Implicit Multiplication
