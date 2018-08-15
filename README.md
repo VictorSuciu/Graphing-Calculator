@@ -42,7 +42,7 @@ Previously entered functions can be recalled using the back/forward arrow button
 
 ### Error Reporting
 
-This graphing calculator will notify the user of errors in the function they are trying to graph. There are three categories of errors.
+This graphing calculator will notify the user of errors in the function they are trying to graph. There are four categories of errors.
 
 1. **Unbalanced parentheses.** When there are not the same number of open and closed parentheses.
 ```
