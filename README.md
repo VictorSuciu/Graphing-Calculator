@@ -3,9 +3,14 @@ This is a graphing calculator application I made as a project in grade 12. It ca
 
 </br>
 
+##Downloads
+**[Standard Edition](https://github.com/VictorSuciu/README-Assets/blob/master/Graphing-Calculator/Downloads/Graphing_Calculator.jar)** for standard computers.
+
+**[Fast Edition](https://github.com/VictorSuciu/README-Assets/blob/master/Graphing-Calculator/Downloads/Graphing_Calculator.jar)** for slow computers. Draws a line much faster in exchnge lower precision.
+
 </br>
 
-![alt text](https://github.com/VictorSuciu/Graphing-Calculator/blob/master/Images/GC_Example.png)
+![alt text](https://github.com/VictorSuciu/README-Assets/blob/master/Graphing-Calculator/Images/GC_Example.png)
 
 </br>
 
