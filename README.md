@@ -7,7 +7,7 @@ This is a graphing calculator application I made as a project in grade 12. It ca
 
 **[Standard Edition](https://github.com/VictorSuciu/README-Assets/blob/master/Graphing-Calculator/Downloads/Graphing_Calculator.jar)** for standard computers.
 
-**[Fast Edition](https://github.com/VictorSuciu/README-Assets/blob/master/Graphing-Calculator/Downloads/Graphing_Calculator.jar)** for slow computers. Draws a line much faster in exchnge for lower precision.
+**[Fast Edition](https://github.com/VictorSuciu/README-Assets/blob/master/Graphing-Calculator/Downloads/Graphing_Calculator_FastEdition.jar)** for slow computers. Draws a line much faster in exchnge for lower precision.
 
 </br>
 
