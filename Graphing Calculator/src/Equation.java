@@ -15,7 +15,7 @@ public class Equation {
 	char[] nums = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
 	char[] symbols = {'(', ')', '+', '-', '*', '/', '^', '|'}; 
 	char[] operators = {'+', '-', '*', '/', '^'}; 
-	String[] mathElements = {"sin", "cos", "tan", "arcsin", "arccos", "arctan", "sqrt", "abs", "mod"};
+	String[] mathElements = {"sin", "cos", "tan", "arcsin", "arccos", "arctan", "sqrt", "abs", "mod", "log", "ln", "e", "pi"};
 	
 	int index; //universal iteration index used by most methods: prepareString(), correctOrderOfOperations(), powerOperations(), and f(x)10 
 	double thisX = 0; //Stores the current value of x in generatePoints() (the method that generates a list of points using
@@ -744,8 +744,20 @@ public class Equation {
 			else if(segmentedEq.get(index).equals("sqrt")) {
 				return f(Math.sqrt(x));
 			}
+			else if(segmentedEq.get(index).equals("log")) {
+				return f(Math.log10(x));
+			}
 			else if(segmentedEq.get(index).equals("mod")) {
 				return x % f(x);
+			}
+			else if(segmentedEq.get(index).equals("ln")) {
+				return f(Math.log(x));
+			}
+			else if(segmentedEq.get(index).equals("pi")) {
+				return f(Math.PI);
+			}
+			else if(segmentedEq.get(index).equals("e")) {
+				return f(Math.E);
 			}
 			else if(isNum(segmentedEq.get(index).charAt(0)) != -1) {
 				double num = Double.parseDouble(segmentedEq.get(index));
@@ -851,7 +863,7 @@ public class Equation {
 	 * in in equationString, and returns false if it does not.
 	 *///----------------------------------------------13
 	private boolean foundElement(String s) {
-		if(index < equationString.length() - s.length() - 1) {
+		if(index <= equationString.length() - s.length()) {
 			if(equationString.substring(index, index + s.length()).equals(s)) {
 				return true;
 			}
