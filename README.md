@@ -3,7 +3,7 @@ This is a graphing calculator application I made as a project in grade 12. It ca
 
 </br>
 
-##Downloads
+## Downloads
 
 **[Standard Edition](https://github.com/VictorSuciu/README-Assets/blob/master/Graphing-Calculator/Downloads/Graphing_Calculator.jar)** for standard computers.
 
